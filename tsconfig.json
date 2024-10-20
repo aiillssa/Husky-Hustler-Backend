@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es6", // Set the target ECMAScript version
+    "module": "commonjs", // Set the module system
+    "strict": true, // Enable all strict type-checking options
+    "esModuleInterop": true, // Allows default imports from modules with no default export
+    "skipLibCheck": true, // Skip type checking of declaration files
+    "forceConsistentCasingInFileNames": true, // Ensure that casing is consistent in imports
+    "typeRoots": ["./node_modules/@types", "./src/types"]
+  },
+  "include": [
+    "src/**/*", // Include all TypeScript files in the src directory
+    "types/**/*" // Include all TypeScript declaration files
+  ],
+  "exclude": [
+    "node_modules", // Exclude node_modules directory
+    "dist" // Exclude output directory (if using a build step)
+  ]
+}
