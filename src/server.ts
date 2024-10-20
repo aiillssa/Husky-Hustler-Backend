@@ -1,5 +1,5 @@
 import express, { Express } from "express";
-import { connectDB } from "./config/DBConn";
+import { connectDB } from "./config/dbConn";
 import routerUser from "./routes/users";
 
 // Using the port which AWS has assigned or 8088
