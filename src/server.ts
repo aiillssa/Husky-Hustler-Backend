@@ -1,7 +1,8 @@
 import express, { Express } from "express";
 import { connectDB } from "./config/dbConn";
 import routerUser from "./routes/users";
-
+import dotenv from "dotenv";
+dotenv.config();
 // Using the port which AWS has assigned or 8088
 // during development
 const port: number = Number(process.env.PORT_NUM) || 8088;
