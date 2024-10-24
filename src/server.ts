@@ -1,6 +1,7 @@
 import express, { Express } from "express";
 import { connectDB } from "./config/dbConn";
 import routerUser from "./routes/users";
+import "reflect-metadata";
 
 // Using the port which AWS has assigned or 8088
 // during development
