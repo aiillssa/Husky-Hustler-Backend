@@ -3,13 +3,13 @@ import { Shops } from "./Shop";
 
 @Entity()
 export class Categories {
-    @PrimaryColumn()
-    idCategories !: number
+  @PrimaryColumn()
+  idCategories!: number;
 
-    @Column()
-    categoryName !: string
+  @Column()
+  categoryName!: string;
 
-    @ManyToMany(() => Shops, (shop) => shop.categories)
-    @JoinTable()
-    shops !: Shops[]
+  @ManyToMany(() => Shops, (shop) => shop.categories)
+  @JoinTable()
+  shops!: Shops[];
 }
