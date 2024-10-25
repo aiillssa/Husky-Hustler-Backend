@@ -2,6 +2,8 @@ import express, { Express } from "express";
 import { connectDB } from "./config/dbConn";
 import routerUser from "./routes/users";
 import "reflect-metadata";
+import dotenv from "dotenv";
+dotenv.config();
 
 // Using the port which AWS has assigned or 8088
 // during development

@@ -1,17 +1,16 @@
 import express, { Router } from "express";
 import {
-  deleteUser,
   getAllUsers,
-  postUser,
   updateUser,
+  deleteUser,
+  createUser,
 } from "../controllers/userController";
-
 const routerUser: Router = express.Router();
 
 routerUser
   .route("/")
   .get(getAllUsers)
-  .post(postUser)
+  .post(createUser)
   .put(updateUser)
   .delete(deleteUser);
 
