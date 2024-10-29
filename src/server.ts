@@ -22,4 +22,6 @@ connectDB().then(() => {
   });
 });
 
+app.use(express.json());
+
 app.use("/users", routerUser);

@@ -20,6 +20,8 @@ export class Users {
   @Column()
   name!: string;
 
+  @Column()
+  email!: string;
   //links the user to their shop and creates a column for it
   @OneToOne(() => Shops, (shops) => shops.idshops)
   @JoinColumn()
