@@ -3,6 +3,8 @@ import assert = require("assert");
 import * as httpMocks from "node-mocks-http"
 import { createUser, getAllUsers } from "../controllers/userController";
 import { AppDataSource } from "../config/data-source";
+import { createUserValidator } from "../middleware/validators/createUserValidator";
+import { create } from "domain";
 describe("routes", function(){
     it("get", async function(){
         await AppDataSource.initialize();
@@ -11,12 +13,15 @@ describe("routes", function(){
             urls:"/users/",
             body:{
                 name: "ailsa",
-                email: "ailsa@uw.edu"
+                email: ""
             }
         });
 
         const s2 = httpMocks.createResponse({})
-        createUser(s,s2);
+        
+        createUserValidator(s,s2,() => createUser(s,s2));
+
+        assert.deepStrictEqual(s2._getStatusCode(),400);
 
         const l = httpMocks.createRequest({
             method: "GET",
@@ -25,7 +30,7 @@ describe("routes", function(){
         const l2 = httpMocks.createResponse({});
         getAllUsers(l,l2);
 
-        assert.strictEqual(l2._getStatusCode(),200);
+        assert.deepStrictEqual(l2._getStatusCode(),200);
 
     });
 });
