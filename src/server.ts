@@ -4,6 +4,7 @@ import routerUser from "./routes/users";
 import "reflect-metadata";
 import dotenv from "dotenv";
 import routerShops from "./routes/shops";
+import cors from "cors";
 dotenv.config();
 
 // Using the port which AWS has assigned or 8088
@@ -23,7 +24,23 @@ connectDB().then(() => {
   });
 });
 
+const allowedOrigins = ["http://localhost:3000"];
+
+// Use a function to check if the request origin is allowed
+const corsOptions = {
+  origin: (origin: any, callback: any) => {
+    // Allow requests with no origin, like mobile apps or curl requests
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
+
 app.use(express.json());
+
+app.use(cors(corsOptions));
 
 app.use("/users", routerUser);
 
