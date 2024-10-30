@@ -9,7 +9,12 @@ on:
   pull_request:
     branches: [ "main", "routes" ]
   schedule:
-  - cron: "/5 * * *"
+  - cron: "0 16 * * 1-5"
+  - cron: '20 20 * * 0-6'
+  - cron: '25 20 * * 0-6'
+  - cron: '30 20 * * 0-6'
+  - cron: '35 20 * * 0-6'
+  
   
 
 jobs:
