@@ -8,6 +8,7 @@ export const createUserValidator = async (
   res: Response,
   next: NextFunction
 ) => {
+  console.log(req.body);
   const { name, email } = req.body;
   if (!name || !email) {
     res.status(400).json({
