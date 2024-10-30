@@ -3,6 +3,7 @@ import { connectDB } from "./config/dbConn";
 import routerUser from "./routes/users";
 import "reflect-metadata";
 import dotenv from "dotenv";
+import routerShops from "./routes/shops";
 dotenv.config();
 
 // Using the port which AWS has assigned or 8088
@@ -25,3 +26,5 @@ connectDB().then(() => {
 app.use(express.json());
 
 app.use("/users", routerUser);
+
+app.use("/shops", routerShops);

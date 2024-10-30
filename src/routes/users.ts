@@ -4,7 +4,8 @@ import {
   updateUser,
   createUser,
 } from "../controllers/userController";
+import { createUserValidator } from "../middleware/validators/createUserValidator";
 const routerUser: Router = express.Router();
 
-routerUser.route("/").post(createUser).get(getAllUsers);
+routerUser.route("/").post(createUserValidator, createUser).get(getAllUsers);
 export default routerUser;

@@ -11,6 +11,8 @@ export const createUser = async (req: Request, res: Response) => {
   // Assuming that its already authenticated
   // Middleware which checks that req has correct body
   // Middleware for checking if it already exists in the db
+
+  // Already confirmed to have name and email
   const body: any = req.body;
   try {
     const user = await AppDataSource.createQueryBuilder()
