@@ -3,6 +3,10 @@ import { connectDB } from "./config/dbConn";
 import routerUser from "./routes/users";
 import "reflect-metadata";
 import dotenv from "dotenv";
+import routerShops from "./routes/shops";
+import cors from "cors";
+import bodyParser from "body-parser";
+import { corsOptions } from "./config/corsOptions";
 dotenv.config();
 
 // Using the port which AWS has assigned or 8088
@@ -22,4 +26,10 @@ connectDB().then(() => {
   });
 });
 
+app.use(cors(corsOptions));
+
+app.use(bodyParser.json());
+
 app.use("/users", routerUser);
+
+app.use("/shops", routerShops);

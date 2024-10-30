@@ -2,16 +2,10 @@ import express, { Router } from "express";
 import {
   getAllUsers,
   updateUser,
-  deleteUser,
   createUser,
 } from "../controllers/userController";
+import { createUserValidator } from "../middleware/validators/createUserValidator";
 const routerUser: Router = express.Router();
 
-routerUser
-  .route("/")
-  .get(getAllUsers)
-  .post(createUser)
-  .put(updateUser)
-  .delete(deleteUser);
-
+routerUser.route("/").post(createUserValidator, createUser).get(getAllUsers);
 export default routerUser;

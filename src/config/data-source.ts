@@ -1,9 +1,10 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { Shops } from "./models/Shop";
-import { Users } from "./models/Users";
+import { Shops } from "../models/Shop";
+import { Users } from "../models/Users";
 import dotenv from "dotenv";
-import { Categories } from "./models/Categories";
+import { Categories } from "../models/Categories";
+import { Products } from "../models/Products";
 dotenv.config();
 export const AppDataSource = new DataSource({
   type: "mysql",
@@ -14,7 +15,7 @@ export const AppDataSource = new DataSource({
   database: process.env.AWS_SQL_DB || "husky-hustlers-db",
   synchronize: true,
   logging: false,
-  entities: [Shops, Users, Categories],
+  entities: [Shops, Users, Categories, Products],
   migrations: [],
   subscribers: [],
 });
