@@ -130,3 +130,4 @@ dist
 .pnp.*
 
 Local.session.sql
+.vscode/settings.json
