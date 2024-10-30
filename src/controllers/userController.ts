@@ -49,3 +49,29 @@ export const getAllUsers = async (req: Request, res: Response) => {
 };
 
 export const updateUser = async (req: Request, res: Response) => {};
+
+export const deleteUser = async (req: Request, res: Response) => {
+  const user_id = req.params.id;
+  if (!user_id) {
+    res.status(400).json({ error: `UserID is required` });
+    return;
+  }
+  try {
+    const result = await AppDataSource.createQueryBuilder()
+      .delete()
+      .from(Users)
+      .where("idUsers = :id", { id: user_id })
+      .execute();
+    if (result.affected == 0) {
+      res.sendStatus(204);
+      return;
+    }
+    res.status(200).json({ msg: "User deleted successfully" });
+    return;
+  } catch (err) {
+    console.warn(
+      `[Controller - deleteUser] failed trying to delete user from table\nError:${err}`
+    );
+    res.status(500).json({ error: err });
+  }
+};
