@@ -28,7 +28,7 @@ export const createUser = async (req: Request, res: Response) => {
     console.warn(
       `[Controller - createUser] failed trying to access Users table\nError:${err}`
     );
-    res.status(400).json({ error: err });
+    res.status(500).json({ error: err });
   }
 };
 
@@ -44,7 +44,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
     console.warn(
       `[Controller - getAllUsers] failed trying to access Users table\nError:${err}`
     );
-    res.status(400).json({ error: err });
+    res.status(500).json({ error: err });
   }
 };
 
