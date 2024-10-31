@@ -28,7 +28,8 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
+      - name: start backend
+        run: npm run dev
       - name: Run tests
         env:
           AWS_SQL_HOST: ${{ secrets.AWS_SQL_HOST }}
