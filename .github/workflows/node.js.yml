@@ -1,48 +1,38 @@
-name: CI
+name: Node.js CI
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main", "routes"]
   pull_request:
-    branches:
-      - main
+    branches: ["main", "routes"]
+  schedule:
+    - cron: "0 12 * * 0-6"
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:latest
-        env:
-          MYSQL_ROOT_PASSWORD: rootpassword
-          MYSQL_DATABASE: test_db
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
 
       - name: Install dependencies
-        run: npm install
-
-      - name: Initialize database schema
-        run: npm run migrate  # Use this or similar command for migrations
-
-      - name: Start backend server
-        run: npm run dev &  # Starts the server on 8088
-
+        run: npm ci
       - name: Run tests
+        env:
+          AWS_SQL_HOST: ${{ secrets.AWS_SQL_HOST }}
+          AWS_SQL_PORT: ${{ secrets.AWS_SQL_PORT }}
+          AWS_SQL_USER: ${{ secrets.AWS_SQL_USER }}
+          AWS_SQL_PASS: ${{ secrets.AWS_SQL_PASS }}
+          AWS_SQL_DB: ${{ secrets.AWS_SQL_DB }}
         run: npm run test
