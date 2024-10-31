@@ -8,7 +8,9 @@ import {
 import { createUserValidator } from "../middleware/validators/createUserValidator";
 const routerUser: Router = express.Router();
 
-routerUser.route("/").post(createUserValidator, createUser).get(getAllUsers);
+routerUser.post("/", createUserValidator, createUser);
+
+routerUser.get("/", getAllUsers);
 
 routerUser.delete("/:id", deleteUser);
 export default routerUser;

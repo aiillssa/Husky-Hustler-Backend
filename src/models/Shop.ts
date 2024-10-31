@@ -22,11 +22,11 @@ export class Shops {
   @Column()
   ownerName!: string;
 
-  @Column()
-  contactInformation!: string;
+  @Column("json")
+  contactInformation!: Record<string, any>;
 
   //returning the idUsers field
-  @OneToOne(() => Users, (users) => users.idUsers)
+  @OneToOne(() => Users, (users) => users.shop)
   @JoinColumn()
   user!: Users;
 

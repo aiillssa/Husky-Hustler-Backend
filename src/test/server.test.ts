@@ -8,7 +8,9 @@ import { create } from "domain";
 
 describe("user-routes", function () {
   it("create", async function () {
-    await AppDataSource.initialize();
+    await AppDataSource.initialize().catch((err) =>
+      console.error(`Error: ${err}`)
+    );
 
     // No given body
     let s = httpMocks.createRequest({

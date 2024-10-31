@@ -1,6 +1,8 @@
 import express, { Router } from "express";
 import { createShop, getAllShops } from "../controllers/shopController";
+import { createShopValidator } from "../middleware/validators/createShopValidator";
 const routerShops: Router = express.Router();
 
-routerShops.route("/").post(createShop).get(getAllShops);
+routerShops.post("/", createShopValidator, createShop);
+routerShops.get("/", getAllShops);
 export default routerShops;
