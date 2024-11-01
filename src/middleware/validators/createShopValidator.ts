@@ -12,13 +12,19 @@ export const createShopValidator = (
     ownerName,
     contactInformation,
     userIdUsers,
+    category1Name,
+    category2Name,
+    category3Name,
   } = req.body;
   if (
     !shopName ||
     !shopDescription ||
     !ownerName ||
     !contactInformation ||
-    !userIdUsers
+    !userIdUsers ||
+    !category1Name ||
+    !category2Name ||
+    !category3Name
   ) {
     res.status(400).json({
       error: `At least one missing field: shopName: ${shopName}, ownerName: ${ownerName}, contactInformation: ${contactInformation}, userIdUsers = ${userIdUsers}`,

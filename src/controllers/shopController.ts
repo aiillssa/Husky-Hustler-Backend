@@ -1,13 +1,18 @@
 import { Request, Response } from "express";
 import { Shops } from "../models/Shop";
 import { Users } from "../models/Users";
+import { AppDataSource } from "../config/data-source";
+import { Categories } from "../models/Categories";
 export const createShop = async (req: Request, res: Response) => {
   const {
     shopName,
     shopDescription,
     ownerName,
     contactInformation,
-    userIdUsers, // Might want to pass this through params
+    userIdUsers,
+    category1Name,
+    category2Name,
+    category3Name, // Might want to pass this through params
   } = req.body;
 
   try {
@@ -17,13 +22,21 @@ export const createShop = async (req: Request, res: Response) => {
       return;
     }
 
+    const cat1 = await Categories.findOneBy({ categoryName: category1Name });
+    const cat2 = await Categories.findOneBy({ categoryName: category2Name });
+    const cat3 = await Categories.findOneBy({ categoryName: category3Name });
+    console.log(cat1, cat2, cat3);
+    //categories should be an array!!!
     const shop = Shops.create({
       shopName: shopName,
       shopDescription: shopDescription,
       ownerName: ownerName,
       contactInformation: contactInformation,
+      categories: [],
       user: user,
     });
+
+    shop.categories = [...shop.categories, cat1!, cat2!, cat3!];
 
     const savedShop = await shop.save();
 

@@ -43,7 +43,7 @@ export class Shops extends BaseEntity {
     joinColumn: { name: "shop", referencedColumnName: "idshops" },
     inverseJoinColumn: {
       name: "categories",
-      referencedColumnName: "idCategories",
+      referencedColumnName: "categoryName",
     },
   })
   categories!: Categories[];
