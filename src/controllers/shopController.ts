@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { AppDataSource } from "../config/data-source";
 import { Shops } from "../models/Shop";
 import { Users } from "../models/Users";
 export const createShop = async (req: Request, res: Response) => {
@@ -8,32 +7,27 @@ export const createShop = async (req: Request, res: Response) => {
     shopDescription,
     ownerName,
     contactInformation,
-    userIdUsers,
+    userIdUsers, // Might want to pass this through params
   } = req.body;
-  // let parsedContactInformation = JSON.parse(contactInformation);
+
   try {
-    const user = await AppDataSource.getRepository(Users).findOneBy({
-      idUsers: userIdUsers,
-    });
+    const user = await Users.findOneBy({ idUsers: parseInt(userIdUsers) });
 
     if (!user) {
       res.status(404).json({ error: "User not found" });
       return;
     }
 
-    const newShop = AppDataSource.getRepository(Shops).create({
-      shopName,
-      shopDescription,
-      ownerName,
-      contactInformation,
-      user,
+    const shop = Shops.create({
+      shopName: shopName,
+      shopDescription: shopDescription,
+      ownerName: ownerName,
+      contactInformation: contactInformation,
+      user: user,
     });
 
     // Extremely sus and kinda strange, i dont think we should do this
-    const savedShop = await AppDataSource.getRepository(Shops).save(newShop);
-
-    user.shop = savedShop;
-    await AppDataSource.getRepository(Users).save(user);
+    const savedShop = await shop.save();
 
     console.log(`Created Shop: ${savedShop}`);
     res.status(201).json({ msg: "Success", shop_id: savedShop.idshops });
@@ -51,11 +45,9 @@ export const getShop = async (req: Request, res: Response) => {};
 
 export const getAllShops = async (req: Request, res: Response) => {
   try {
-    const allShops = await AppDataSource.getRepository(Shops)
-      .createQueryBuilder("shop")
-      .getMany();
-    console.log(allShops);
-    res.status(200).json({ shops: allShops });
+    const shops = await Shops.find();
+    console.log(shops);
+    res.status(200).json({ shops });
   } catch (err) {
     console.warn(
       `[Controller - getAllShops] failed trying to access Shops table\nError:${err}`

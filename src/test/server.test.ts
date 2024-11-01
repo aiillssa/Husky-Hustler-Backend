@@ -4,14 +4,21 @@ import * as httpMocks from "node-mocks-http";
 import { createUser, getAllUsers } from "../controllers/userController";
 import { AppDataSource } from "../config/data-source";
 import { createUserValidator } from "../middleware/validators/createUserValidator";
-import { create } from "domain";
+import { before, after } from "mocha";
+
+before(async () => {
+  await AppDataSource.initialize().catch((error) => {
+    console.error(`Error during Data Source Initialization: ${error}`);
+    return;
+  });
+});
+
+after(async () => {
+  await AppDataSource.destroy();
+});
 
 describe("user-routes", function () {
   it("create", async function () {
-    await AppDataSource.initialize().catch((err) =>
-      console.error(`Error: ${err}`)
-    );
-
     // No given body
     let s = httpMocks.createRequest({
       method: "POST",
@@ -107,7 +114,6 @@ describe("user-routes", function () {
   });
 
   it("get", async function () {
-    // await AppDataSource.initialize();
     const s = httpMocks.createRequest({
       method: "POST",
       urls: "/users/",

@@ -2,28 +2,16 @@
 // CRUD operations dealing with Users
 // Can (and probably will need to) add more
 // methods from here (and might need to get rid of some)
-import { AppDataSource } from "../config/data-source";
-import { NextFunction, Request, Response } from "express";
-import { Shops } from "../models/Shop";
+import { Request, Response } from "express";
 import { Users } from "../models/Users";
 
 export const createUser = async (req: Request, res: Response) => {
-  // Assuming that its already authenticated
-  // Middleware which checks that req has correct body
-  // Middleware for checking if it already exists in the db
-
-  // Already confirmed to have name and email
-  const body: any = req.body;
+  const { name, email } = req.body;
   try {
-    const user = await AppDataSource.createQueryBuilder()
-      .insert()
-      .into(Users)
-      .values({ name: body.name, email: body.email })
-      .execute();
+    const user = Users.create({ name, email });
+    await user.save();
     console.log(user);
-    res
-      .status(201)
-      .json({ msg: "Success", user_id: user.generatedMaps[0].idUsers });
+    res.status(201).json({ msg: "Success", user_id: user.idUsers });
   } catch (err) {
     console.warn(
       `[Controller - createUser] failed trying to access Users table\nError:${err}`
@@ -33,11 +21,9 @@ export const createUser = async (req: Request, res: Response) => {
 };
 
 // For Testing Purposes
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getAllUsers = async (_req: Request, res: Response) => {
   try {
-    const allUsers = await AppDataSource.getRepository(Users)
-      .createQueryBuilder("user")
-      .getMany();
+    const allUsers = await Users.find();
     console.log(allUsers);
     res.status(200).json({ users: allUsers });
   } catch (err) {
@@ -57,11 +43,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     return;
   }
   try {
-    const result = await AppDataSource.createQueryBuilder()
-      .delete()
-      .from(Users)
-      .where("idUsers = :id", { id: user_id })
-      .execute();
+    const result = await Users.delete({ idUsers: parseInt(user_id) });
     if (result.affected == 0) {
       res.sendStatus(204);
       return;

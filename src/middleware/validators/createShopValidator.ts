@@ -31,12 +31,5 @@ export const createShopValidator = (
       .json({ error: `Invalid shopName, cannot be an empty string` });
     return;
   }
-  // let parsedContactInfo;
-  // try {
-  //   parsedContactInfo = JSON.parse(shopDescription);
-  // } catch (err) {
-  //   res.status(400).json({ error: `Error in parsing contact information` });
-  //   return;
-  // }
   next();
 };
