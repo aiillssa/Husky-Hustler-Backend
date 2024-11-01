@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { AppDataSource } from "../../config/data-source";
 import { Users } from "../../models/Users";
 
 /** Middleware to confirm createUser is called in a valid fashion. */
@@ -22,11 +21,7 @@ export const createUserValidator = async (
     return;
   }
   // Not sure if we need all this ---->
-  const existingUser = await AppDataSource.createQueryBuilder()
-    .select("user")
-    .from(Users, "user")
-    .where("user.email = :email", { email: email })
-    .getOne();
+  const existingUser = await Users.findOne({ where: { email: email } });
 
   if (existingUser) {
     // If the user already exists, return 409 Conflict
