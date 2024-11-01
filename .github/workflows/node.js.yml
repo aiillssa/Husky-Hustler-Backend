@@ -25,6 +25,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
+      - name: Debug connection info
+        run: |
+          echo "Connecting to database on host: $AWS_SQL_HOST and port: $AWS_SQL_PORT"
 
       - name: Install dependencies
         run: npm ci
