@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Shops } from "../models/Shop";
 import { Users } from "../models/Users";
+import { AppDataSource } from "../config/data-source";
 export const createShop = async (req: Request, res: Response) => {
   const {
     shopName,
@@ -44,6 +45,7 @@ export const createShop = async (req: Request, res: Response) => {
 export const getShop = async (req: Request, res: Response) => {};
 
 export const getAllShops = async (req: Request, res: Response) => {
+  AppDataSource.initialize();
   try {
     const shops = await Shops.find();
     console.log(shops);
