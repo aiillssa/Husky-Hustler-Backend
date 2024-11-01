@@ -25,7 +25,7 @@ export const createShopValidator = (
     });
     return;
   }
-  if (shopName == "") {
+  if (shopName === "") {
     res
       .status(400)
       .json({ error: `Invalid shopName, cannot be an empty string` });
