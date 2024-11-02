@@ -55,6 +55,7 @@ export const createShop = async (req: Request, res: Response) => {
 export const getShop = async (req: Request, res: Response) => {};
 
 export const getAllShops = async (req: Request, res: Response) => {
+  AppDataSource.initialize();
   try {
     const shops = await Shops.find();
     console.log(shops);
