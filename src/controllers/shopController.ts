@@ -1,18 +1,16 @@
 import { Request, Response } from "express";
 import { Shops } from "../models/Shop";
 import { Users } from "../models/Users";
-import { AppDataSource } from "../config/data-source";
 import { Categories } from "../models/Categories";
+import { In } from "typeorm";
 export const createShop = async (req: Request, res: Response) => {
   const {
     shopName,
     shopDescription,
     ownerName,
     contactInformation,
-    userIdUsers,
-    category1Name,
-    category2Name,
-    category3Name, // Might want to pass this through params
+    userIdUsers, // Might want to pass this through params
+    categories,
   } = req.body;
 
   try {
@@ -22,24 +20,28 @@ export const createShop = async (req: Request, res: Response) => {
       return;
     }
 
-    const cat1 = await Categories.findOneBy({ categoryName: category1Name });
-    const cat2 = await Categories.findOneBy({ categoryName: category2Name });
-    const cat3 = await Categories.findOneBy({ categoryName: category3Name });
-    console.log(cat1, cat2, cat3);
-    //categories should be an array!!!
+    const categoryEntities = await Categories.findBy({
+      categoryName: In(categories),
+    });
+
+    if (categoryEntities.length !== categories.length) {
+      res
+        .status(400)
+        .json({
+          error: `At least one category passed in does not exist in the table`,
+        });
+      return;
+    }
     const shop = Shops.create({
       shopName: shopName,
       shopDescription: shopDescription,
       ownerName: ownerName,
       contactInformation: contactInformation,
-      categories: [],
+      categories: categoryEntities,
       user: user,
     });
 
-    shop.categories = [...shop.categories, cat1!, cat2!, cat3!];
-
     const savedShop = await shop.save();
-
     console.log(`Created Shop: ${savedShop}`);
     res.status(201).json({ msg: "Success", shop_id: savedShop.idshops });
     return;
