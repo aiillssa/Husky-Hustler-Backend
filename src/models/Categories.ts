@@ -10,10 +10,7 @@ import { Shops } from "./Shop";
 
 @Entity()
 export class Categories extends BaseEntity {
-  @PrimaryColumn()
-  idCategories!: number;
-
-  @Column()
+  @PrimaryColumn({ unique: true })
   categoryName!: string;
 
   @ManyToMany(() => Shops)

@@ -9,7 +9,7 @@ export const createUserValidator = async (
 ) => {
   console.log(req.body);
   const { name, email } = req.body;
-  if (!name || !email || name == "" || email == "") {
+  if (!name || !email || name === "" || email === "") {
     res.status(400).json({
       error: `At least one missing field: name: ${name}, email: ${email}`,
     });

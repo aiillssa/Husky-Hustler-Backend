@@ -34,7 +34,7 @@ export class Shops extends BaseEntity {
   contactInformation!: Record<string, any>;
 
   //returning the idUsers field
-  @OneToOne(() => Users, (users) => users.shop)
+  @OneToOne(() => Users, (users) => users.shop, { onDelete: "CASCADE" })
   @JoinColumn() // This will make shop the owning side of this one-to-one relation thing
   user!: Users;
 
@@ -43,7 +43,7 @@ export class Shops extends BaseEntity {
     joinColumn: { name: "shop", referencedColumnName: "idshops" },
     inverseJoinColumn: {
       name: "categories",
-      referencedColumnName: "idCategories",
+      referencedColumnName: "categoryName",
     },
   })
   categories!: Categories[];

@@ -44,7 +44,7 @@ export const deleteUser = async (req: Request, res: Response) => {
   }
   try {
     const result = await Users.delete({ idUsers: parseInt(user_id) });
-    if (result.affected == 0) {
+    if (result.affected === 0) {
       res.sendStatus(204);
       return;
     }
@@ -54,6 +54,6 @@ export const deleteUser = async (req: Request, res: Response) => {
     console.warn(
       `[Controller - deleteUser] failed trying to delete user from table\nError:${err}`
     );
-    res.status(500).json({ error: err });
+    res.status(500).json({ error: String(err) });
   }
 };

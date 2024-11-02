@@ -7,6 +7,7 @@ import routerShops from "./routes/shops";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { corsOptions } from "./config/corsOptions";
+
 dotenv.config();
 
 // Using the port which AWS has assigned or 8088
