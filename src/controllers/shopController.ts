@@ -25,11 +25,9 @@ export const createShop = async (req: Request, res: Response) => {
     });
 
     if (categoryEntities.length !== categories.length) {
-      res
-        .status(400)
-        .json({
-          error: `At least one category passed in does not exist in the table`,
-        });
+      res.status(400).json({
+        error: `At least one category passed in does not exist in the table`,
+      });
       return;
     }
     const shop = Shops.create({
@@ -91,5 +89,37 @@ export const deleteShop = async (req: Request, res: Response) => {
       `[Controller - deleteShop] failed trying to delete shop from table\nError:${err}`
     );
     res.status(500).json({ error: String(err) });
+  }
+};
+
+export const getShopsWithCategory = async (req: Request, res: Response) => {
+  const { categoryName } = req.params;
+  if (!categoryName) {
+    res.status(400).json({ error: `Category Name is required` });
+    return;
+  }
+  console.log(categoryName);
+  try {
+    // const shops = await Shops.createQueryBuilder("shop")
+    //   .leftJoinAndSelect("shop.categories", "category")
+    //   .where("category.categoryName = :categoryName", { categoryName })
+    //   .getMany();
+    const shops = await Shops.find({
+      relations: ["categories"],
+      where: { categories: { categoryName } },
+    });
+    if (shops.length === 0) {
+      res.status(404).json({ msg: `No shops found for this category` });
+      return;
+    } else {
+      res.status(200).json({ shops: shops });
+      return;
+    }
+  } catch (err) {
+    console.warn(
+      `[Controller - getShopsWithCategory] failed trying to access Shops table\nError:${err}`
+    );
+    res.status(500).json({ error: err });
+    return;
   }
 };
