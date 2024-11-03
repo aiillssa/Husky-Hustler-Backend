@@ -1,11 +1,4 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  PrimaryColumn,
-} from "typeorm";
+import { BaseEntity, Entity, ManyToMany, PrimaryColumn } from "typeorm";
 import { Shops } from "./Shop";
 
 @Entity()
