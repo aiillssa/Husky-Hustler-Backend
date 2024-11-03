@@ -30,7 +30,7 @@ export class Shops extends BaseEntity {
   @Column()
   ownerName!: string;
 
-  @Column("nvarchar")
+  @Column("simple-json")
   contactInformation!: Record<string, any>;
 
   //returning the idUsers field
