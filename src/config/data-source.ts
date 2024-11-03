@@ -7,7 +7,7 @@ import { Categories } from "../models/Categories";
 import { Products } from "../models/Products";
 dotenv.config();
 export const AppDataSource = new DataSource({
-  type: "mysql",
+  type: "mssql",
   host: process.env.AWS_SQL_HOST || "localhost",
   port: Number(process.env.AWS_SQL_PORT) || 3306,
   username: process.env.AWS_SQL_USER || "admin",
