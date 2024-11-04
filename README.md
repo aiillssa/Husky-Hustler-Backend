@@ -2,6 +2,4 @@
 
 Backend for husky hustler
 
-Node version: 20.12
-
-npm install express
+**FOR DOCUMENTATION, PLEASE NAVIGATE TO THE WIKI TAB**
