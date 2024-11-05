@@ -4,6 +4,7 @@ import routerUser from "./routes/users";
 import "reflect-metadata";
 import dotenv from "dotenv";
 import routerShops from "./routes/shops";
+import routerGoogle from "./routes/google";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { corsOptions } from "./config/corsOptions";
@@ -34,3 +35,5 @@ app.use("/users", routerUser);
 
 // Shops route
 app.use("/shops", routerShops);
+
+app.use("/google", routerGoogle);
