@@ -68,7 +68,10 @@ export const createShopValidator = (
     res.status(400).json({ error: `Cannot have more than 3 categories` });
     return;
   }
-
+  if (typeof contactInformation !== "object" || contactInformation === null) {
+    res.status(400).json({ error: `contactInformation must be a json type` });
+    return;
+  }
   // Proceed to createShop
   next();
 };
