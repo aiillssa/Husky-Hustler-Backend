@@ -9,6 +9,7 @@ import { NextFunction, Request, Response } from "express";
  * - ownerName (string)
  * - userIdUsers (string or number)
  * - categories (array): 0 < len(categories) <= 3, categories[i] must be in categories table
+ * - contactInformation (json)
  * @returns
  * - 400 error if validation fails
  * - Otherwise forwards to the createShop endpoint
