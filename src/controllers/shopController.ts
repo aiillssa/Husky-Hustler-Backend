@@ -66,7 +66,44 @@ export const createShop = async (req: Request, res: Response) => {
   }
 };
 
-export const getShop = async (req: Request, res: Response) => {};
+/**
+ * GET request for retrieving a shop w shop_id from database
+ * @returns
+ * - 200 w/ the shop if successful
+ * - 400 if shop ID not provided
+ * - 404 if shop w shop_id not found
+ * - 500 if server error
+ */
+export const getShop = async (req: Request, res: Response) => {
+  const shop_id = req.params.id;
+  if (!shop_id) {
+    res.status(400).json({ error: `Shop ID is required` });
+    return;
+  }
+  try {
+    // Get shop
+    const shop = await Shops.findOne({
+      relations: ["categories"],
+      where: { idshops: parseInt(shop_id) },
+    });
+
+    // No shop w shop_id found
+    if (!shop) {
+      res
+        .status(404)
+        .json({ error: `Shop ID ${shop_id} not found in Shops table` });
+      return;
+    }
+    // Return
+    res.status(200).json({ shop: shop });
+    return;
+  } catch (err) {
+    console.warn(
+      `[Controller - getShop] failed trying to get shop from table\nError:${err}`
+    );
+    res.status(500).json({ error: String(err) });
+  }
+};
 
 /**
  * GET request for retrieving all shops from database
@@ -77,7 +114,7 @@ export const getShop = async (req: Request, res: Response) => {};
 export const getAllShops = async (req: Request, res: Response) => {
   try {
     // Get all shops
-    const shops = await Shops.find();
+    const shops = await Shops.find({ relations: ["categories"] });
     console.log(shops);
     res.status(200).json({ shops });
   } catch (err) {
@@ -89,7 +126,80 @@ export const getAllShops = async (req: Request, res: Response) => {
   }
 };
 
-export const updateShops = async (req: Request, res: Response) => {};
+/**
+ * PATCH request to update fields for an existing shop in the Shops table
+ * @returns
+ * - 400 if shop_id is not provided in request
+ * - 204 if no fields to update in request body
+ * - 404 if shop with shop_id not found in the Shops table
+ * - 200 with the updated shop if update is successful
+ * - 500 if server error
+ */
+export const updateShops = async (req: Request, res: Response) => {
+  const shop_id = req.params.id;
+  if (!shop_id) {
+    res.status(400).json({ error: `Shop ID is required` });
+    return;
+  }
+  const {
+    shopName,
+    shopDescription,
+    ownerName,
+    contactInformation,
+    categories,
+  } = req.body;
+  const changes = new Map<string, any>();
+  if (shopName) changes.set("shopName", shopName);
+  if (shopDescription) changes.set("shopDescription", shopDescription);
+  if (ownerName) changes.set("ownerName", ownerName);
+  if (contactInformation) changes.set("contactInformation", contactInformation);
+  if (categories) changes.set("categories", categories);
+  if (changes.size === 0) {
+    res.sendStatus(204);
+    console.log(`No changes made`);
+    return;
+  }
+  if (contactInformation && typeof contactInformation !== "object") {
+    res.status(400).json({
+      error: `contactInformation must be a json`,
+    });
+    return;
+  }
+  try {
+    const shop = await Shops.findOne({
+      relations: ["categories"],
+      where: { idshops: parseInt(shop_id) },
+    });
+    if (!shop) {
+      res.status(404).json({ error: "Shop not found" });
+      return;
+    }
+    changes.forEach((value, key) => {
+      (shop as any)[key] = value;
+    });
+    if (categories) {
+      const categoryEntities = await Categories.findBy({
+        categoryName: In(categories),
+      });
+      if (categoryEntities.length !== categories.length) {
+        res.status(400).json({
+          error: `At least one category passed in does not exist in the table`,
+        });
+        return;
+      }
+      shop.categories = categoryEntities;
+    }
+
+    await shop.save();
+    res.status(200).json({ shop: shop });
+    console.log(`[Controller - updateShops] Shop updated successfully`);
+  } catch (err) {
+    console.warn(
+      `[Controller - updateShops] failed trying to update shop from table\nError: ${err}`
+    );
+    res.status(500).json({ error: String(err) });
+  }
+};
 
 /**
  * DELETE request for deleting a shop
