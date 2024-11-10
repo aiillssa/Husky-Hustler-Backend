@@ -6,18 +6,31 @@ import { AppDataSource } from "../config/data-source";
 import { createUserValidator } from "../middleware/validators/createUserValidator";
 import { before, after } from "mocha";
 
-before(async () => {
-  await AppDataSource.initialize().catch((error) => {
-    console.error(`Error during Data Source Initialization: ${error}`);
-    return;
-  });
-});
-
-after(async () => {
-  await AppDataSource.destroy();
-});
-
 describe("user-routes", function () {
+
+  before(async function () {
+    // Initialize the connection before any tests
+    this.timeout(5000); // Optional: Increase the timeout if connection takes time
+    await AppDataSource.initialize()
+      .then(() => {
+        console.log('DataSource has been initialized!');
+      })
+      .catch((error) => {
+        console.error('Error during DataSource initialization:', error);
+      });
+  });
+
+  // 'after' hook to close the connection after all tests have finished
+  after(async function () {
+    await AppDataSource.destroy() // Ensure the connection is properly closed
+      .then(() => {
+        console.log('DataSource connection closed!');
+      })
+      .catch((error) => {
+        console.error('Error during DataSource destruction:', error);
+      });
+  });
+
   it("create", async function () {
     // No given body
     let s = httpMocks.createRequest({
@@ -111,6 +124,7 @@ describe("user-routes", function () {
     createUserValidator(s, s2, () => createUser(s, s2));
     console.log(s2._getStatusCode());
     assert.deepStrictEqual(s2._getStatusCode(), 200);
+
   });
 
   it("get", async function () {
