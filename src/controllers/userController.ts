@@ -42,6 +42,30 @@ export const getAllUsers = async (_req: Request, res: Response) => {
   }
 };
 
+export const getUser = async (req: Request, res: Response) => {
+  const user_id = req.params.id;
+  if (!user_id) {
+    res.status(400).json({ error: `UserID is required` });
+    return;
+  }
+  try {
+    const user = await Users.findOne({ where: { idUsers: parseInt(user_id) } });
+    if (!user) {
+      res
+        .status(404)
+        .json({ error: `User ID ${user_id} not found in Users table` });
+      return;
+    }
+    res.status(200).json({ user: user });
+    return;
+  } catch (err) {
+    console.warn(
+      `[Controller - getUser] failed trying to get user from table\nError: ${err}`
+    );
+    res.status(500).json({ error: String(err) });
+  }
+};
+
 export const updateUser = async (req: Request, res: Response) => {};
 
 /**
