@@ -42,6 +42,14 @@ export const getAllUsers = async (_req: Request, res: Response) => {
   }
 };
 
+/**
+ * GET request for retrieving a user w user_id from database
+ * @returns
+ * - 200 w/ the user if successful
+ * - 400 is user ID not provided
+ * - 404 if user w user_id not found
+ * - 500 if server error
+ */
 export const getUser = async (req: Request, res: Response) => {
   const user_id = req.params.id;
   if (!user_id) {
@@ -49,7 +57,7 @@ export const getUser = async (req: Request, res: Response) => {
     return;
   }
   try {
-    const user = await Users.findOne({ where: { idUsers: parseInt(user_id) } });
+    const user = await Users.findOneBy({ idUsers: parseInt(user_id) });
     if (!user) {
       res
         .status(404)

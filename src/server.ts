@@ -8,6 +8,7 @@ import routerGoogle from "./routes/google";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { corsOptions } from "./config/corsOptions";
+import routerCategories from "./routes/categories";
 
 dotenv.config();
 
@@ -35,5 +36,8 @@ app.use("/users", routerUser);
 
 // Shops route
 app.use("/shops", routerShops);
+
+// Category route
+app.use("/categories", routerCategories);
 
 app.use("/google", routerGoogle);

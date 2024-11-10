@@ -7,10 +7,14 @@ import {
   getUser,
 } from "../controllers/userController";
 import { createUserValidator } from "../middleware/validators/createUserValidator";
+import { verifyJWT } from "../middleware/verifyJWT";
 const routerUser: Router = express.Router();
 
-routerUser.post("/", createUserValidator, createUser);
+// Public routes
 routerUser.get("/", getAllUsers);
-routerUser.get("/:id", getUser);
-routerUser.delete("/:id", deleteUser);
+
+// Protected Routes
+routerUser.post("/", verifyJWT, createUserValidator, createUser);
+routerUser.get("/:id", verifyJWT, getUser);
+routerUser.delete("/:id", verifyJWT, deleteUser);
 export default routerUser;
