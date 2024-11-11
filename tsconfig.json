@@ -11,7 +11,8 @@
       "./src/types"
     ],
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "outDir": "./dist"
   },
   "include": [
     "src/**/*", // Include all TypeScript files in the src directory
