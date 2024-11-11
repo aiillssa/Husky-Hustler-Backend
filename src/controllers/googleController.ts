@@ -32,7 +32,7 @@ export const handleGoogleLogin = async (
 
     // Verify the ID token with Google
     const ticket = await oAuth2Client.verifyIdToken({
-      idToken: idToken, 
+      idToken: idToken,
       audience: process.env.CLIENT_ID,
     });
 
@@ -62,6 +62,11 @@ export const handleGoogleLogin = async (
         name,
         email,
       });
+      // Something went wrong here
+      if (response.status !== 201) {
+        res.status(400).json({ error: `Invalid format` });
+        return;
+      }
       user_id = response.data.user_id;
     }
 
