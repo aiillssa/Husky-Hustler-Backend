@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { DefaultAzureCredential } from "@azure/identity";
 import { BlobServiceClient } from "@azure/storage-blob";
 import dotenv from "dotenv";
+import * as fs from "fs";
 
 dotenv.config();
 const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME as string;
@@ -37,6 +38,9 @@ export const listBlobs = async (req: Request, res: Response) => {
     }
 };
 
+
+//! Notes for future: make sure change route to have :id, so we can put different images
+//! Make sure that we can return a bunch of images or smthing yippee
 export const downloadBlobs = async (req: Request, res: Response) => {
 
     console.log("Initializing BlobServiceClient...");
@@ -51,21 +55,23 @@ export const downloadBlobs = async (req: Request, res: Response) => {
     const offset = 0;         // start at beginning
     const length = undefined; // read all
 
-    const downloadBlockBlobResponse: BlobDownloadResponseParsed = await blockBlobClient.download(offset, length);
-    // console.log('\nDownloaded blob content...');
-    // console.log(
-    //     '\t',
-    //     await streamToText(downloadBlockBlobResponse.readableStreamBody as NodeJS.ReadableStream)
-    // );
-    if (downloadBlockBlobResponse.readableStreamBody) {
+    const downloadBlockBlobResponse = await blockBlobClient.download(0);
+    console.log('\nDownloaded blob content...');
+
+    const writableStream = fs.createWriteStream("src\\images\\kitty2");
+
+    try {
+        res.setHeader("Content-Type", downloadBlockBlobResponse.contentType || "image/jpeg");
+
+        // Pipe the binary stream directly to the response to display the image
+        if (!downloadBlockBlobResponse.readableStreamBody) {
+            throw new Error("The readableStreamBody is undefined. Ensure you're running in a Node.js environment.");
+        }
         downloadBlockBlobResponse.readableStreamBody.pipe(res);
-    } else {
-        res.status(404).send("Blob stream not found.");
+    } catch (err) {
+        console.error("Error downloading blob:", err);
+        res.status(500).send("An error occurred while downloading the blob.");
     }
-    // } catch (error) {
-    //     console.error("Error downloading blob:", error);
-    //     res.status(500).send("An error occurred while retrieving the blob.");
-    // }
 
 }
 async function streamToText(readable: NodeJS.ReadableStream): Promise<string> {
