@@ -1,8 +1,10 @@
 import express, { Router } from "express";
-import { handleGoogleLogin } from "../controllers/googleController";
+import { handleGoogleLogIn, handleGoogleSignUp } from "../controllers/googleController";
 
 const routerGoogle: Router = express.Router();
 
-routerGoogle.post("/", handleGoogleLogin);
+routerGoogle.post("/signUp", handleGoogleSignUp);
+routerGoogle.post("/signIn", handleGoogleLogIn);
+
 
 export default routerGoogle;
