@@ -19,3 +19,18 @@ export const createCategory = async (req: Request, res: Response) => {
     res.status(500).json({ error: String(err) });
   }
 };
+
+export const getAllCategories = async (req: Request, res: Response) => {
+  try {
+    const categories = await Categories.find();
+    console.log(
+      `Categories given as follows: ${categories.map((category) => category.categoryName)}`
+    );
+    res.status(200).json(categories);
+  } catch (err) {
+    console.warn(
+      `[Controller - getAllCategories] failed trying to get all categories\nError: ${err}`
+    );
+    res.status(500).json({ error: String(err) });
+  }
+};
