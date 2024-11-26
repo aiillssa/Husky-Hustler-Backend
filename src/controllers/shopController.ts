@@ -26,9 +26,21 @@ export const createShop = async (req: Request, res: Response) => {
 
   try {
     // Validate that user exists in the user table
-    const user = await Users.findOneBy({ idUsers: parseInt(userIdUsers) });
+    const user = await Users.findOne({
+      relations: ["shop"],
+      where: { idUsers: parseInt(userIdUsers) },
+    });
     if (!user) {
       res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    // Validate that user does not already own a shop
+    if (user.shop) {
+      res.status(400).json({
+        error: `User already has a shop: ${user.shop}`,
+        shop: user.shop,
+      });
       return;
     }
 
