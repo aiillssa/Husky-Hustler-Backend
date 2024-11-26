@@ -21,6 +21,7 @@ export const createShop = async (req: Request, res: Response) => {
     contactInformation,
     userIdUsers, // Might want to pass this through params
     categories,
+    necessaryDescription,
   } = req.body;
 
   try {
@@ -51,6 +52,7 @@ export const createShop = async (req: Request, res: Response) => {
       contactInformation: contactInformation,
       categories: categoryEntities,
       user: user,
+      necessaryDescription: necessaryDescription ?? null,
     });
 
     const savedShop = await shop.save();
@@ -147,6 +149,7 @@ export const updateShops = async (req: Request, res: Response) => {
     ownerName,
     contactInformation,
     categories,
+    necessaryDescription,
   } = req.body;
   const changes = new Map<string, any>();
   if (shopName) changes.set("shopName", shopName);
@@ -154,17 +157,28 @@ export const updateShops = async (req: Request, res: Response) => {
   if (ownerName) changes.set("ownerName", ownerName);
   if (contactInformation) changes.set("contactInformation", contactInformation);
   if (categories) changes.set("categories", categories);
+  if (necessaryDescription)
+    changes.set("necessaryDescription", necessaryDescription);
   if (changes.size === 0) {
     res.sendStatus(204);
     console.log(`No changes made`);
     return;
   }
+
   if (contactInformation && typeof contactInformation !== "object") {
     res.status(400).json({
       error: `contactInformation must be a json`,
     });
     return;
   }
+
+  if (necessaryDescription && typeof necessaryDescription !== "object") {
+    res.status(400).json({
+      error: `necessaryDescription must be a json`,
+    });
+    return;
+  }
+
   try {
     const shop = await Shops.findOne({
       relations: ["categories"],
