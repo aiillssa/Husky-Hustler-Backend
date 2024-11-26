@@ -12,7 +12,7 @@ import { verifyJWT } from "../middleware/verifyJWT";
 const routerShops: Router = express.Router();
 
 // Public routes
-routerShops.get("/", getAllShops);
+routerShops.get("/", verifyJWT, getAllShops);
 routerShops.get("/:id", getShop);
 routerShops.get("/categories/:categoryName", getShopsWithCategory);
 
