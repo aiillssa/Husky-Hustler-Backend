@@ -24,6 +24,9 @@ export class Shops extends BaseEntity {
   @Column()
   shopDescription!: string;
 
+  @Column("simple-json", { nullable: true })
+  necessaryDescription!: Record<any, any>;
+
   @Column()
   ownerName!: string;
 
