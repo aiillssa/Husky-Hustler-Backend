@@ -20,14 +20,17 @@
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/mocha": "^10.0.9",
-    "@types/node": "^22.7.7",
+    "@types/node": "^22.9.3",
     "node-mocks-http": "^1.16.1",
     "nodemon": "^3.1.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   },
   "dependencies": {
+    "@azure/identity": "^4.5.0",
+    "@azure/storage-blob": "^12.26.0",
     "@react-oauth/google": "^0.12.1",
+    "@types/uuid": "^10.0.0",
     "assert": "^2.1.0",
     "axios": "^1.7.7",
     "body-parser": "^1.20.3",
@@ -41,7 +44,8 @@
     "mssql": "^6.4.1",
     "mysql": "^2.18.1",
     "reflect-metadata": "^0.2.2",
-    "typeorm": "^0.3.6"
+    "typeorm": "^0.3.6",
+    "uuid": "^11.0.3"
   },
   "mocha": {
     "require": "ts-node/register",

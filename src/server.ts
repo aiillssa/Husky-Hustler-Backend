@@ -9,6 +9,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { corsOptions } from "./config/corsOptions";
 import routerCategories from "./routes/categories";
+import routerBlobs from "./routes/blob";
 
 dotenv.config();
 
@@ -41,3 +42,5 @@ app.use("/shops", routerShops);
 app.use("/categories", routerCategories);
 
 app.use("/google", routerGoogle);
+
+app.use("/blob", routerBlobs);
