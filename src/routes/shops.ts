@@ -4,6 +4,7 @@ import {
   deleteShop,
   getAllShops,
   getShop,
+  getShopWithUserId,
   getShopsWithCategory,
   updateShops,
 } from "../controllers/shopController";
@@ -15,6 +16,7 @@ const routerShops: Router = express.Router();
 // Public routes
 routerShops.get("/", getAllShops);
 routerShops.get("/:id", getShop);
+routerShops.get("/user/:userId", getShopWithUserId);
 routerShops.get("/categories/:categoryName", getShopsWithCategory);
 
 // Protected routes
