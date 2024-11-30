@@ -162,6 +162,7 @@ export const handleGoogleLogIn = async (
       process.env.APP_SECRET!,
       { expiresIn: "1h" }
     );
+    const refreshToken2 = "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15"
 
     console.log("refresh token from creation is ", refreshToken);
     // Set refresh token as an HttpOnly cookie
@@ -170,7 +171,8 @@ export const handleGoogleLogIn = async (
       maxAge: 1000 * 60 * 60, // expire after 60 minutes
       httpOnly: true, // Cookie will not be exposed to client side code
       sameSite: 'none', // If client and server origins are different
-      secure: true // use with HTTPS only
+      secure: true, // use with HTTPS only
+      domain: 'localhost',
     });
     
     res.status(200).json({

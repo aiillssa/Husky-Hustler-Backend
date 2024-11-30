@@ -14,11 +14,11 @@ export const verifyJWT = (req: Request, res: Response, next: NextFunction): void
     console.log(authHeader);
     if (!authHeader?.startsWith('Bearer ')) {
       res.status(401).json({ error: 'Authorization header missing or malformed' });
-      return; // Explicitly return here to avoid further execution
+      return; 
     }
 
     const token = authHeader.split(" ")[1];
-    const refreshToken = req.cookies;
+    const refreshToken = req.cookies.refreshToken;
     console.log("Gotten refreshToken from cookies is: ", refreshToken);
     // Verify the token
     jwt.verify(token, process.env.APP_SECRET!, (err, decoded) => {
