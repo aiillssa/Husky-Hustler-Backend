@@ -156,6 +156,22 @@ export const handleGoogleLogIn = async (
       process.env.APP_SECRET!,
       { expiresIn: "5m" }
     );
+
+    const refreshToken = jwt.sign(
+      { id: user_id },
+      process.env.APP_SECRET!,
+      { expiresIn: "1h" }
+    );
+
+    console.log("refresh token from creation is ", refreshToken);
+    // Set refresh token as an HttpOnly cookie
+   
+    res.cookie( "refreshToken", refreshToken, {
+      maxAge: 1000 * 60 * 60, // expire after 60 minutes
+      httpOnly: true, // Cookie will not be exposed to client side code
+      sameSite: 'none', // If client and server origins are different
+      secure: true // use with HTTPS only
+    });
     
     res.status(200).json({
       auth: true, 

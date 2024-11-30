@@ -6,20 +6,7 @@ export const SECRET_KEY: Secret = 'your-secret-key-here';
 export interface CustomRequest extends Request {
   token: string | JwtPayload;
 }
-/**
- const authHeader = req.headers.authorization || req.headers.Authorization;
-const verifyJWT = (req, res, next) => {
-  const authHeader = req.headers.authorization || req.headers.Authorization;
-  if (!authHeader?.startsWith("Bearer ")) return res.sendStatus(401);
-  const token = authHeader.split(" ")[1];
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-    if (err) return res.sendStatus(403); // Invalid token
-    req.user = decoded.UserInfo.username;
-    req.roles = decoded.UserInfo.roles;
-    next();
-  });
-};
- */
+
 export const verifyJWT = (req: Request, res: Response, next: NextFunction): void => {
   try {
     // Get the token from the Authorization header
@@ -31,7 +18,8 @@ export const verifyJWT = (req: Request, res: Response, next: NextFunction): void
     }
 
     const token = authHeader.split(" ")[1];
-
+    const refreshToken = req.cookies;
+    console.log("Gotten refreshToken from cookies is: ", refreshToken);
     // Verify the token
     jwt.verify(token, process.env.APP_SECRET!, (err, decoded) => {
       // If the verify does not work
@@ -41,8 +29,6 @@ export const verifyJWT = (req: Request, res: Response, next: NextFunction): void
       
     });
 
-    // Attach the decoded token to the request object
-
     // Proceed to the next middleware
     next();
   } catch (err) {
@@ -50,3 +36,20 @@ export const verifyJWT = (req: Request, res: Response, next: NextFunction): void
     res.status(401).json({ error: 'Invalid or expired token' });
   }
 };
+
+/** 
+const refreshJWT = (token: string, refreshToken: string): void => {
+  try {
+    jwt.verify(refreshToken, process.env.APP_SECRET!, (err, decoded) => {
+      // If the verify does not work
+      if(err) {
+        return false;
+      }
+      return "true";
+    });
+  } catch (err) {
+    return "fasle";
+  }
+  
+}
+*/
