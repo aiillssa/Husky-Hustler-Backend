@@ -1,55 +1,75 @@
-import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
-export const SECRET_KEY: Secret = 'your-secret-key-here';
-
-export interface CustomRequest extends Request {
-  token: string | JwtPayload;
-}
+const SECRET_KEY = process.env.APP_SECRET!;
 
 export const verifyJWT = (req: Request, res: Response, next: NextFunction): void => {
   try {
-    // Get the token from the Authorization header
     const authHeader = req.headers.authorization;
-    console.log(authHeader);
+
     if (!authHeader?.startsWith('Bearer ')) {
       res.status(401).json({ error: 'Authorization header missing or malformed' });
-      return; 
+      return;
     }
 
-    const token = authHeader.split(" ")[1];
-    const refreshToken = req.cookies.refreshToken;
-    console.log("Gotten refreshToken from cookies is: ", refreshToken);
-    // Verify the token
-    jwt.verify(token, process.env.APP_SECRET!, (err, decoded) => {
-      // If the verify does not work
-      if(err) {
-        res.status(400).json({error: 'Token is not valid'});
-      }
-      
-    });
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
+      if (err) {
+        if (err.name === 'TokenExpiredError') {
+          // Handle expired token
+          const refreshToken = req.cookies.refreshToken;
 
-    // Proceed to the next middleware
-    next();
+          if (!refreshToken) {
+            return res.status(401).json({ error: 'Refresh token missing' });
+          }
+
+          const newAuthToken = refreshJWT(refreshToken);
+
+          if (!newAuthToken) {
+            return res.status(401).json({ error: 'Invalid or expired refresh token AAAA' });
+          }
+
+          // Set new token in response headers
+          res.setHeader('Authorization', `Bearer ${newAuthToken}`);
+
+          // Allow the request to continue
+          req.headers.authorization = `Bearer ${newAuthToken}`;
+          console.log("Auth token was invalid, refresh token was valid");
+          return next();
+        }
+
+        return res.status(400).json({ error: 'Invalid token' });
+      }
+
+      // Token is valid, proceed to the next middleware
+      console.log("Auth token was valid");
+      next();
+    });
   } catch (err) {
     console.error('JWT verification failed:', err);
     res.status(401).json({ error: 'Invalid or expired token' });
+    console.log("Auth and refresh tokens were invalid");
   }
 };
 
-/** 
-const refreshJWT = (token: string, refreshToken: string): void => {
+const refreshJWT = (refreshToken: string): string | null => {
   try {
-    jwt.verify(refreshToken, process.env.APP_SECRET!, (err, decoded) => {
-      // If the verify does not work
-      if(err) {
-        return false;
-      }
-      return "true";
-    });
+    const decodedRefresh = jwt.verify(refreshToken, SECRET_KEY) as JwtPayload;
+    if (!decodedRefresh) {
+      return null;
+    }
+
+    const newToken = jwt.sign(
+      { id: decodedRefresh.id },
+      SECRET_KEY,
+      { expiresIn: '5m' }
+    );
+
+    console.log("created new token");
+
+    return newToken;
   } catch (err) {
-    return "fasle";
+    console.error('Failed to refresh token:', err);
+    return null;
   }
-  
-}
-*/
+};
