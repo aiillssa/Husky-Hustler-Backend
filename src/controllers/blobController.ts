@@ -1,4 +1,3 @@
-import { BlobDownloadResponseParsed, BlockBlobClient } from "@azure/storage-blob";
 import { Request, Response } from "express";
 import { DefaultAzureCredential } from "@azure/identity";
 import { BlobServiceClient } from "@azure/storage-blob";
@@ -38,8 +37,7 @@ export const listBlobs = async (req: Request, res: Response) => {
 };
 
 
-//! Notes for future: make sure change route to have :id, so we can put different images
-//! Make sure that we can return a bunch of images or smthing yippee
+//! Notes for future: make sure change route to have the id and source as well!
 export const downloadBlob = async (req: Request, res: Response) => {
     const blobServiceClient = await loadServiceClient();
 
@@ -77,7 +75,11 @@ export const uploadBlob = async (req: Request, res: Response) => {
 
     const blockBlobClient = containerClient.getBlockBlobClient("testName")
     //const imagePath = "C:\\CSE 403\\Husky-Hustler-Backend\\kittyThinking.jpg"
-    const formData = req.body
+
+    //I THINK THIS IS HOW IT WILL B BUT IDK gotta wait until frontend 
+    const formData = req.body.formData
+    const name = req.body.name
+    const source = req.body.source
     const img = formData.get(formData.keys().next())
     //const buffer = await fs.readFile(imagePath)
 
