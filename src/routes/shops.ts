@@ -13,8 +13,8 @@ const routerShops: Router = express.Router();
 
 // Public routes
 routerShops.get("/", verifyJWT, getAllShops);
-routerShops.get("/:id", getShop);
-routerShops.get("/categories/:categoryName", getShopsWithCategory);
+routerShops.get("/:id", verifyJWT, getShop);
+routerShops.get("/categories/:categoryName", verifyJWT, getShopsWithCategory);
 
 // Protected routes
 routerShops.post("/", verifyJWT, createShopValidator, createShop);

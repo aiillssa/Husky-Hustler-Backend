@@ -27,10 +27,7 @@ connectDB().then(() => {
 });
 
 // Middleware for CORS issues
-app.use(cors({
-  credentials: true,
-  origin: 'http://localhost:3000', // Frontend's URL
-}));
+app.use(cors(corsOptions));
 
 app.use(cookieParser());
 
