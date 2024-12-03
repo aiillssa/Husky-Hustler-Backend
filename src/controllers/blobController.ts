@@ -69,6 +69,8 @@ export const downloadBlob = async (req: Request, res: Response) => {
 }
 
 //I WILL NEED: the formdata object, a user ID (as a string), and a source (a string)
+
+//ADD FUNCTIONALITY FOR MULTIPLE BLOBS! 
 export const uploadBlob = async (req: Request, res: Response) => {
     console.log("Initializing BlobServiceClient...");
     const blobServiceClient = await loadServiceClient();
@@ -81,10 +83,12 @@ export const uploadBlob = async (req: Request, res: Response) => {
 
     //I THINK THIS IS HOW IT WILL B BUT IDK gotta wait until frontend 
     const formData = req.body.formData
-    const name = req.body.name
+    const id = req.body.id
     const source = req.body.source
     const img = formData.get(formData.keys().next())
-    //const buffer = await fs.readFile(imagePath)
+        //const buffer = await fs.readFile(imagePath)
+
+        .post('localhostfjdalfdja', { formData, "id": 1, "source": "banner" })
 
     try {
         await blockBlobClient.uploadData(img)
