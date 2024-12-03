@@ -24,6 +24,9 @@ export class Shops extends BaseEntity {
   @Column()
   shopDescription!: string;
 
+  @Column("simple-json", { nullable: true })
+  necessaryDescription!: Record<any, any>;
+
   @Column()
   ownerName!: string;
 
@@ -31,7 +34,7 @@ export class Shops extends BaseEntity {
   contactInformation!: Record<string, any>;
 
   //returning the idUsers field
-  @OneToOne(() => Users, (users) => users.shop, { onDelete: "CASCADE" })
+  @OneToOne(() => Users, (users) => users.shop)
   @JoinColumn() // This will make shop the owning side of this one-to-one relation thing
   user!: Users;
 

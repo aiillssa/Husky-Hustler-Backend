@@ -21,13 +21,26 @@ export const createShop = async (req: Request, res: Response) => {
     contactInformation,
     userIdUsers, // Might want to pass this through params
     categories,
+    necessaryDescription,
   } = req.body;
 
   try {
     // Validate that user exists in the user table
-    const user = await Users.findOneBy({ idUsers: parseInt(userIdUsers) });
+    const user = await Users.findOne({
+      relations: ["shop"],
+      where: { idUsers: parseInt(userIdUsers) },
+    });
     if (!user) {
       res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    // Validate that user does not already own a shop
+    if (user.shop) {
+      res.status(400).json({
+        error: `User already has a shop: ${user.shop}`,
+        shop: user.shop,
+      });
       return;
     }
 
@@ -51,6 +64,7 @@ export const createShop = async (req: Request, res: Response) => {
       contactInformation: contactInformation,
       categories: categoryEntities,
       user: user,
+      necessaryDescription: necessaryDescription ?? null,
     });
 
     const savedShop = await shop.save();
@@ -106,6 +120,44 @@ export const getShop = async (req: Request, res: Response) => {
 };
 
 /**
+ * GET request for retrieving a shop w user_id from database
+ * @returns
+ * - 200 w/ the shop if successful
+ * - 400 if user ID not provided
+ * - 404 if shop w user_id not found
+ * - 500 if server error
+ */
+export const getShopWithUserId = async (req: Request, res: Response) => {
+  const user_id = req.params.userId;
+  if (!user_id) {
+    res.status(400).json({ error: `User ID is required` });
+    return;
+  }
+  try {
+    const shop = await Shops.findOne({
+      where: { user: { idUsers: parseInt(user_id) } },
+    });
+    if (!shop) {
+      res
+        .status(404)
+        .json({
+          error: `User ID ${user_id} does not have a shop`,
+          hasShop: false,
+        });
+      return;
+    }
+    res
+      .status(200)
+      .json({ msg: `User ${user_id} has a shop`, hasShop: true, shop: shop });
+  } catch (err) {
+    console.warn(
+      `[Controller - getShopWithUserId] failed trying to get shop from table\nError:${err}`
+    );
+    res.status(500).json({ error: String(err) });
+  }
+};
+
+/**
  * GET request for retrieving all shops from database
  * @returns
  * - 200 w/ an array of the shops if successful
@@ -148,6 +200,7 @@ export const updateShops = async (req: Request, res: Response) => {
     ownerName,
     contactInformation,
     categories,
+    necessaryDescription,
   } = req.body;
   const changes = new Map<string, any>();
   if (shopName) changes.set("shopName", shopName);
@@ -155,17 +208,28 @@ export const updateShops = async (req: Request, res: Response) => {
   if (ownerName) changes.set("ownerName", ownerName);
   if (contactInformation) changes.set("contactInformation", contactInformation);
   if (categories) changes.set("categories", categories);
+  if (necessaryDescription)
+    changes.set("necessaryDescription", necessaryDescription);
   if (changes.size === 0) {
     res.sendStatus(204);
     console.log(`No changes made`);
     return;
   }
+
   if (contactInformation && typeof contactInformation !== "object") {
     res.status(400).json({
       error: `contactInformation must be a json`,
     });
     return;
   }
+
+  if (necessaryDescription && typeof necessaryDescription !== "object") {
+    res.status(400).json({
+      error: `necessaryDescription must be a json`,
+    });
+    return;
+  }
+
   try {
     const shop = await Shops.findOne({
       relations: ["categories"],
