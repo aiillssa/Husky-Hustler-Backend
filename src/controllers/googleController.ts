@@ -154,19 +154,19 @@ export const handleGoogleLogIn = async (
     const token = jwt.sign(
       { id: user_id },
       process.env.APP_SECRET!,
-      { expiresIn: "10s" }
+      { expiresIn: "5m" }
     );
 
     const refreshToken = jwt.sign(
       { id: user_id },
       process.env.APP_SECRET!,
-      { expiresIn: "1h" }
+      { expiresIn: "1d" }
     );
     const refreshToken2 = "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15"
 
     // Set refresh token as an HttpOnly cookie
     res.cookie( "refreshToken", refreshToken, {
-      maxAge: 1000 * 60 * 60, // expire after 60 minutes
+      maxAge: 1000 * 60 * 60 * 24, // expire after 1 day
       httpOnly: true, // Cookie will not be exposed to client side code
       sameSite: 'none', // If client and server origins are different
       secure: true, // use with HTTPS only
@@ -190,4 +190,22 @@ export const handleGoogleLogIn = async (
   }
 }
 
+export const handleLogOut = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try{
+    res.clearCookie('refreshToken', {
+      httpOnly: true, 
+      sameSite: 'none', 
+      secure: true, 
+      domain: 'localhost',
+    });
+    console.log("Cleared cookies");
+    res.status(200).json({ message: 'User logged out successfully' });
+  } catch (error) {
+    console.error('Error during logout:', error);
+    res.status(500).json({ message: 'Failed to log out. Please try again.' });
+  } 
+}
 
