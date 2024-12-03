@@ -5,7 +5,7 @@ const routerBlobs = express.Router();
 
 
 //routerBlobs.get("/:id/:source", downloadBlob) //will b added in the future...
-routerBlobs.get("/", downloadBlob);
+routerBlobs.get("/:id/:source", downloadBlob);
 routerBlobs.post("/", uploadBlob);
 
 export default routerBlobs;
