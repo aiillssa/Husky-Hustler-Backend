@@ -9,6 +9,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { corsOptions } from "./config/corsOptions";
 import routerCategories from "./routes/categories";
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -27,6 +28,8 @@ connectDB().then(() => {
 
 // Middleware for CORS issues
 app.use(cors(corsOptions));
+
+app.use(cookieParser());
 
 // Middleware to parse json in requests
 app.use(bodyParser.json());

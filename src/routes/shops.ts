@@ -14,6 +14,7 @@ import { checkInappropriate } from "../middleware/validators/filter";
 const routerShops: Router = express.Router();
 
 // Public routes
+
 routerShops.get("/", getAllShops);
 routerShops.get("/:id", getShop);
 routerShops.get("/user/:userId", getShopWithUserId);
