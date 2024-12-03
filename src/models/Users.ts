@@ -25,7 +25,7 @@ export class Users extends BaseEntity {
   created_at!: Date;
   //links the user to their shop and creates a column for it
   @OneToOne(() => Shops, (shops) => shops.user, {
-    cascade: true,
+    cascade: ["remove"],
     onDelete: "CASCADE",
   })
   shop!: Shops;

@@ -132,5 +132,4 @@ dist
 Local.session.sql
 .vscode/settings.json
 .deployment
-
 *.jpg
