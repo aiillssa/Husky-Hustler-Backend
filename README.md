@@ -15,6 +15,6 @@ https://github.com/aiillssa/Husky-Hustler-Backend/wiki
 
 `npm install yarn` (you might need to do `npm install -g yarn` if it doesn't work)
 
-** To run the backend server:**
+** To run the backend server: **
 
 `npm run dev`
