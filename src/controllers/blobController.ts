@@ -38,11 +38,14 @@ export const listBlobs = async (req: Request, res: Response) => {
 
 
 //! Notes for future: make sure change route to have the id and source as well!
+//PASS IN THE USER ID IN THE URL
 export const downloadBlob = async (req: Request, res: Response) => {
+    const userID = req.params.id
+    const source = req.params.source
     const blobServiceClient = await loadServiceClient();
 
     const containerClient = blobServiceClient.getContainerClient("images");
-    const blockBlobClient = containerClient.getBlockBlobClient("testName")
+    const blockBlobClient = containerClient.getBlockBlobClient("testName");
 
     const downloadBlockBlobResponse = await blockBlobClient.download(0);
     console.log('\nDownloaded blob content...');
@@ -62,10 +65,12 @@ export const downloadBlob = async (req: Request, res: Response) => {
         console.error("Error downloading blob:", err);
         res.status(500).send("An error occurred while downloading the blob.");
     }
-    //res.status(200).send("[blobController] - successfully downloaded blob")
 
 }
 
+//I WILL NEED: the formdata object, a user ID (as a string), and a source (a string)
+
+//ADD FUNCTIONALITY FOR MULTIPLE BLOBS! 
 export const uploadBlob = async (req: Request, res: Response) => {
     console.log("Initializing BlobServiceClient...");
     const blobServiceClient = await loadServiceClient();
@@ -78,7 +83,7 @@ export const uploadBlob = async (req: Request, res: Response) => {
 
     //I THINK THIS IS HOW IT WILL B BUT IDK gotta wait until frontend 
     const formData = req.body.formData
-    const name = req.body.name
+    const id = req.body.id
     const source = req.body.source
     const img = formData.get(formData.keys().next())
     //const buffer = await fs.readFile(imagePath)
