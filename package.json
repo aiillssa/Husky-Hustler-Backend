@@ -8,7 +8,8 @@
     "server": "ts-node src/server.ts",
     "start": "node ./dist/server.js",
     "build": "tsc --build",
-    "test": "mocha"
+    "test": "mocha",
+    "prestart": "npm run build"
   },
   "keywords": [],
   "author": "",
