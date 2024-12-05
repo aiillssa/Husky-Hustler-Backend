@@ -45,7 +45,7 @@ export const downloadBlob = async (req: Request, res: Response) => {
     const blobServiceClient = await loadServiceClient();
 
     const containerClient = blobServiceClient.getContainerClient("images");
-    const blockBlobClient = containerClient.getBlockBlobClient(userID + "." + source);
+    const blockBlobClient = containerClient.getBlockBlobClient("testName");
 
     const downloadBlockBlobResponse = await blockBlobClient.download(0);
     console.log('\nDownloaded blob content...');
@@ -86,9 +86,7 @@ export const uploadBlob = async (req: Request, res: Response) => {
     const id = req.body.id
     const source = req.body.source
     const img = formData.get(formData.keys().next())
-        //const buffer = await fs.readFile(imagePath)
-
-        .post('localhostfjdalfdja', { formData, "id": 1, "source": "banner" })
+    //const buffer = await fs.readFile(imagePath)
 
     try {
         await blockBlobClient.uploadData(img)
