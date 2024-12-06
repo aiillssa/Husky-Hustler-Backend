@@ -10,10 +10,11 @@ import bodyParser from "body-parser";
 import { corsOptions } from "./config/corsOptions";
 import routerCategories from "./routes/categories";
 import routerBlobs from "./routes/blob";
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
-const port: number = Number(process.env.PORT_NUM) || 8088;
+const port: number = Number(process.env.PORT) || 8088;
 
 const app: Express = express();
 
@@ -28,6 +29,8 @@ connectDB().then(() => {
 
 // Middleware for CORS issues
 app.use(cors(corsOptions));
+
+app.use(cookieParser());
 
 // Middleware to parse json in requests
 app.use(bodyParser.json());
