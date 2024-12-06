@@ -14,7 +14,7 @@ const routerUser: Router = express.Router();
 routerUser.get("/", getAllUsers);
 
 // Protected Routes
-routerUser.post("/", verifyJWT, createUserValidator, createUser);
+routerUser.post("/", createUserValidator, createUser);
 routerUser.get("/:id", verifyJWT, getUser);
 routerUser.delete("/:id", verifyJWT, deleteUser);
 export default routerUser;
