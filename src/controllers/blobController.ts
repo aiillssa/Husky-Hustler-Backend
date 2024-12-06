@@ -90,9 +90,7 @@ export const uploadBlob = async (req: Request, res: Response) => {
     //const imagePath = "C:\\CSE 403\\Husky-Hustler-Backend\\kittyThinking.jpg"
 
     //I THINK THIS IS HOW IT WILL B BUT IDK gotta wait until frontend 
-    // const formData = req.body.file
-    // const id = req.body.userID
-    // const source = req.body.source
+    
     const file = req.file as MulterFile
     const id = req.body.userID;
     const source = req.body.source;
@@ -101,8 +99,9 @@ export const uploadBlob = async (req: Request, res: Response) => {
     //     console.log(pair[0], pair[1]);  // Logs the key and value
     // }
 
-    console.log("body:", req.body);
-    console.log("file received", file);
+
+    console.log("body", req.body);
+    console.log("file received", file.originalname);
 
     const blockBlobClient = containerClient.getBlockBlobClient(id + "-" + source)
     //const buffer = await fs.readFile(imagePath)
