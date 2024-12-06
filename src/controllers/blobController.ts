@@ -78,18 +78,19 @@ export const uploadBlob = async (req: Request, res: Response) => {
 
     //here is where i will add the names and stuff
 
-    const blockBlobClient = containerClient.getBlockBlobClient("testName")
+
     //const imagePath = "C:\\CSE 403\\Husky-Hustler-Backend\\kittyThinking.jpg"
 
     //I THINK THIS IS HOW IT WILL B BUT IDK gotta wait until frontend 
     const formData = req.body.formData
-    const id = req.body.id
+    const id = req.body.userID
     const source = req.body.source
-    const img = formData.get(formData.keys().next())
+
+    const blockBlobClient = containerClient.getBlockBlobClient(id + "." + source)
     //const buffer = await fs.readFile(imagePath)
 
     try {
-        await blockBlobClient.uploadData(img)
+        await blockBlobClient.uploadData(formData)
     } catch (err) {
         console.log(err)
         res.status(500).send("An error occurred while uploading the image.");
