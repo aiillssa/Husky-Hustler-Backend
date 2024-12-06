@@ -71,7 +71,15 @@ export const downloadBlob = async (req: Request, res: Response) => {
 //I WILL NEED: the formdata object, a user ID (as a string), and a source (a string)
 
 //ADD FUNCTIONALITY FOR MULTIPLE BLOBS! 
+interface MulterFile {
+    buffer: Buffer;
+    originalname: string;
+    mimetype: string;
+}
+
+
 export const uploadBlob = async (req: Request, res: Response) => {
+    //const upload = multer()
     console.log("Initializing BlobServiceClient...");
     const blobServiceClient = await loadServiceClient();
     const containerClient = blobServiceClient.getContainerClient("images");
@@ -82,21 +90,37 @@ export const uploadBlob = async (req: Request, res: Response) => {
     //const imagePath = "C:\\CSE 403\\Husky-Hustler-Backend\\kittyThinking.jpg"
 
     //I THINK THIS IS HOW IT WILL B BUT IDK gotta wait until frontend 
-    const formData = req.body.formData
-    const id = req.body.userID
-    const source = req.body.source
+    // const formData = req.body.file
+    // const id = req.body.userID
+    // const source = req.body.source
+    const file = req.file as MulterFile
+    const id = req.body.userID;
+    const source = req.body.source;
 
-    const blockBlobClient = containerClient.getBlockBlobClient(id + "." + source)
+    // for (let pair of req.file.entries()) {
+    //     console.log(pair[0], pair[1]);  // Logs the key and value
+    // }
+
+    console.log("body:", req.body);
+    console.log("file received", file);
+
+    const blockBlobClient = containerClient.getBlockBlobClient(id + "-" + source)
     //const buffer = await fs.readFile(imagePath)
 
     try {
-        await blockBlobClient.uploadData(formData)
+        //await blockBlobClient.uploadStream(formData)
+        await blockBlobClient.uploadData(file.buffer);
+        res.status(200).send("[blobController] - successfully uploaded blob")
     } catch (err) {
         console.log(err)
         res.status(500).send("An error occurred while uploading the image.");
     }
 
-    res.status(200).send("[blobController] - successfully uploaded blob")
+    //res.status(200).send("[blobController] - successfully uploaded blob")
 
+}
+
+function multer() {
+    throw new Error("Function not implemented.");
 }
 
