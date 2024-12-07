@@ -45,7 +45,7 @@ export const downloadBlob = async (req: Request, res: Response) => {
     const blobServiceClient = await loadServiceClient();
 
     const containerClient = blobServiceClient.getContainerClient("images");
-    const blockBlobClient = containerClient.getBlockBlobClient("testName");
+    const blockBlobClient = containerClient.getBlockBlobClient(userID + "-" + source);
 
     const downloadBlockBlobResponse = await blockBlobClient.download(0);
     console.log('\nDownloaded blob content...');
