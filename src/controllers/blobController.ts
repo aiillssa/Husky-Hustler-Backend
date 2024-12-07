@@ -8,11 +8,28 @@ const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME as string;
 
 
 export const loadServiceClient = async () => {
-    console.log("Initializing BlobServiceClient...");
-    const blobServiceClient = new BlobServiceClient(
-        `https://${accountName}.blob.core.windows.net`,
-        new DefaultAzureCredential() // Ensure credentials are correct)
+
+    const AZURE_STORAGE_CONNECTION_STRING =
+        process.env.AZURE_STORAGE_CONNECTION_STRING;
+
+    if (!AZURE_STORAGE_CONNECTION_STRING) {
+        throw Error('Azure Storage Connection string not found');
+    }
+
+    const blobServiceClient = BlobServiceClient.fromConnectionString(
+        AZURE_STORAGE_CONNECTION_STRING
     );
+
+
+    // Create the BlobServiceClient object with connection string
+    // const blobServiceClient = BlobServiceClient.fromConnectionString(
+    //     AZURE_STORAGE_CONNECTION_STRING
+    // );
+    // console.log("Initializing BlobServiceClient...");
+    // const blobServiceClient = new BlobServiceClient(
+    //     `https://${accountName}.blob.core.windows.net`,
+    //     new DefaultAzureCredential() // Ensure credentials are correct)
+    // );
 
     return blobServiceClient
 }
@@ -90,7 +107,7 @@ export const uploadBlob = async (req: Request, res: Response) => {
     //const imagePath = "C:\\CSE 403\\Husky-Hustler-Backend\\kittyThinking.jpg"
 
     //I THINK THIS IS HOW IT WILL B BUT IDK gotta wait until frontend 
-    
+
     const file = req.file as MulterFile
     const id = req.body.userID;
     const source = req.body.source;
