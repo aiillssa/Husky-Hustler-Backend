@@ -21,7 +21,7 @@ const oAuth2Client = new OAuth2Client(
  */
 export const getGoogleUserInfo = async (
   code: string
-): Promise<{email: string; name: string} | null> => {
+): Promise<{email: string; name: string, picture: string} | null> => {
   try {
     // Exchange authorization code for token
     const { tokens } = await oAuth2Client.getToken(code);
@@ -43,13 +43,13 @@ export const getGoogleUserInfo = async (
     if (!payload) {
       throw new Error("Invalid Google token payload");
     }
-    const { email, name } = payload;
+    const { email, name, picture } = payload;
 
-    if (!email || !name) {
-      throw new Error("Missing email or name in Google token payload");
+    if (!email || !name || !picture) {
+      throw new Error("Missing email, name, or picture in Google token payload");
     }
 
-    return {email, name};
+    return {email, name, picture};
   } catch (error) {
     console.error("[Utility - getGoogleUserInfo] Error getting user info:", error);
     return null;
@@ -141,7 +141,7 @@ export const handleGoogleLogIn = async (
       return;
     }
 
-    const { email, name } = userInfo;
+    const { email, name, picture } = userInfo;
 
     // Tries to find the user in the database using email
     const existingUser = await Users.findOne({ where: { email: email } });
@@ -179,6 +179,7 @@ export const handleGoogleLogIn = async (
       id: user_id,
       email: userInfo.email,
       name: userInfo.name,
+      picture: userInfo.picture,
     });
     return;
     }
