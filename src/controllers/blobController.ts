@@ -109,7 +109,7 @@ export const uploadBlob = async (req: Request, res: Response) => {
     //I THINK THIS IS HOW IT WILL B BUT IDK gotta wait until frontend 
 
     const file = req.file as MulterFile
-    const id = req.body.userID;
+    const id = req.body.id;
     const source = req.body.source;
 
     // for (let pair of req.file.entries()) {
