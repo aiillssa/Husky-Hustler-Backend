@@ -143,7 +143,7 @@ export const uploadProductBlob = async (req: Request, res: Response) => {
             res.status(200).send("[blobController] - successfully uploaded blob")
         } catch (err) {
             console.log(err)
-            res.status(500).send("An error occurred while uploading the image.");
+            //res.status(500).send("An error occurred while uploading the image.");
         }
 
     });
