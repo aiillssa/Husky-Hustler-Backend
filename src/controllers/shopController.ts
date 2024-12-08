@@ -164,7 +164,7 @@ export const getShopWithUserId = async (req: Request, res: Response) => {
 export const getAllShops = async (req: Request, res: Response) => {
   try {
     // Get all shops
-    const shops = await Shops.find({ relations: ["categories"] });
+    const shops = await Shops.find({ relations: ["categories", "user"] });
     //console.log(shops);
     console.log("Accessed all shops successfully");
     res.status(200).json({ shops });
