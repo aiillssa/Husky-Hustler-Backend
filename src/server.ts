@@ -10,7 +10,7 @@ import bodyParser from "body-parser";
 import { corsOptions } from "./config/corsOptions";
 import routerCategories from "./routes/categories";
 import routerBlobs from "./routes/blob";
-import cookieParser from 'cookie-parser';
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
