@@ -11,6 +11,7 @@ import {
 import { createShopValidator } from "../middleware/validators/createShopValidator";
 import { verifyJWT } from "../middleware/verifyJWT";
 import { checkInappropriate } from "../middleware/validators/filter";
+import { logger } from "../middleware/logger";
 const routerShops: Router = express.Router();
 
 // Public routes
@@ -18,7 +19,7 @@ const routerShops: Router = express.Router();
 routerShops.get("/", getAllShops);
 routerShops.get("/:id", getShop);
 routerShops.get("/user/:userId", getShopWithUserId);
-routerShops.get("/categories/:categoryName", getShopsWithCategory);
+routerShops.get("/categories/:categoryName", logger, getShopsWithCategory);
 
 // Protected routes
 routerShops.post(
