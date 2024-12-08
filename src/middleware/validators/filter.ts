@@ -37,7 +37,7 @@ export const checkInappropriate = (fields: string[]) => {
       const aiRes = response.response.text().trim().toLowerCase();
       if (aiRes == "true") {
         res.status(400).json({
-          error: `Some fields had inappropriate entries`,
+          error: `Some fields had inappropriate entries. Please try again.`,
           isInappropriate: true, // To be used on the frontend
         });
         return;

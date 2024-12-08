@@ -41,7 +41,7 @@ export const createShopValidator = (
     !categories
   ) {
     res.status(400).json({
-      error: `At least one missing field: shopName: ${shopName}, ownerName: ${ownerName}, contactInformation: ${contactInformation}, userIdUsers = ${userIdUsers}, categories = ${categories}`,
+      error: `At least one missing field: shopName: ${shopName}, ownerName: ${ownerName}, contactInformation: ${contactInformation}, userIdUsers = ${userIdUsers}, categories = ${categories}. Please try again`,
     });
     return;
   }
@@ -50,27 +50,41 @@ export const createShopValidator = (
   if (shopName === "") {
     res
       .status(400)
-      .json({ error: `Invalid shopName, cannot be an empty string` });
+      .json({
+        error: `Invalid shopName, cannot be an empty string. Please try again`,
+      });
     return;
   }
 
   // Check if categories is an array
   if (typeof categories !== "object") {
-    res.status(400).json({ error: `Invalid categories, should be an array` });
+    res
+      .status(400)
+      .json({
+        error: `Invalid categories, should be an array. Please try again`,
+      });
     return;
   }
 
   // Checking length constraints on categories array
   if (categories.length === 0) {
-    res.status(400).json({ error: `Should be at least one category` });
+    res
+      .status(400)
+      .json({ error: `Should be at least one category. Please try again` });
     return;
   }
   if (categories.length > 3) {
-    res.status(400).json({ error: `Cannot have more than 3 categories` });
+    res
+      .status(400)
+      .json({ error: `Cannot have more than 3 categories. Please try again` });
     return;
   }
   if (typeof contactInformation !== "object" || contactInformation === null) {
-    res.status(400).json({ error: `contactInformation must be a json type` });
+    res
+      .status(400)
+      .json({
+        error: `contactInformation must be a json type. Please try again`,
+      });
     return;
   }
   // Proceed to createShop
