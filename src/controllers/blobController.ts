@@ -131,8 +131,8 @@ export const uploadProductBlob = async (req: Request, res: Response) => {
 
     const id = req.body.id;
     const source = req.body.source;
-    const caption = req.body.caption as string[];
-    const price = req.body.price as string[];
+    const caption = req.body.captions as string[];
+    const price = req.body.prices as string[];
     console.log(caption)
     console.log(price)
 
