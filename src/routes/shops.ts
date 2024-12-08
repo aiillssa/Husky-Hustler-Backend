@@ -12,6 +12,7 @@ import { createShopValidator } from "../middleware/validators/createShopValidato
 import { verifyJWT } from "../middleware/verifyJWT";
 import { checkInappropriate } from "../middleware/validators/filter";
 import { logger } from "../middleware/logger";
+import { updateShopValidator } from "../middleware/validators/updateShopValidator";
 const routerShops: Router = express.Router();
 
 // Public routes
@@ -33,6 +34,7 @@ routerShops.delete("/:id", verifyJWT, deleteShop);
 routerShops.patch(
   "/:id",
   verifyJWT,
+  updateShopValidator,
   checkInappropriate(["shopName", "shopDescription"]),
   updateShops
 );
