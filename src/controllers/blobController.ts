@@ -131,10 +131,10 @@ export const uploadProductBlob = async (req: Request, res: Response) => {
 
     const id = req.body.id;
     const source = req.body.source;
-    const caption = req.body.captions as string[];
-    const price = req.body.prices as string[];
-    console.log(caption)
-    console.log(price)
+    const captions = req.body.captions as string[];
+    const prices = req.body.prices as string[];
+    console.log(captions)
+    console.log(prices)
 
     files.forEach(async (file, index) => {
         const blockBlobClient = containerClient.getBlockBlobClient(id + "-" + source + index)
