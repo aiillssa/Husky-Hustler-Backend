@@ -62,6 +62,7 @@ export const downloadBlob = async (req: Request, res: Response) => {
     const blobServiceClient = await loadServiceClient();
 
     const containerClient = blobServiceClient.getContainerClient("images");
+    console.log("this is what i'm getting", userID + "-" + source)
     const blockBlobClient = containerClient.getBlockBlobClient(userID + "-" + source);
 
     const downloadBlockBlobResponse = await blockBlobClient.download(0);
@@ -135,6 +136,13 @@ export const uploadProductBlob = async (req: Request, res: Response) => {
     const prices = req.body.prices as string[];
     console.log(captions)
     console.log(prices)
+
+    //user id, products captions, products prices, also product indices
+
+    //[image1, image2, image3]
+    //[caption1, ]
+    //[price1, ]
+
 
     files.forEach(async (file, index) => {
         const blockBlobClient = containerClient.getBlockBlobClient(id + "-" + source + index)
