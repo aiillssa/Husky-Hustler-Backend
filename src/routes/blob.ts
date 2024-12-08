@@ -12,6 +12,7 @@ const upload = multer();
 
 
 //routerBlobs.get("/:id/:source", downloadBlob) //will b added in the future...
+routerBlobs.get("/", listBlobs);
 routerBlobs.get("/:id/:source", downloadBlob);
 routerBlobs.post("/", upload.single('file'), uploadBlob);
 routerBlobs.post("/product", upload.array('files'), uploadProductBlob)

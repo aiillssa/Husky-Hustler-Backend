@@ -42,7 +42,7 @@ export const listBlobs = async (req: Request, res: Response) => {
         console.log("Listing blobs...");
         const blobs = [];
         for await (const blob of containerClient.listBlobsFlat()) {
-            console.log(`Blob name: ${blob.name}`);
+            // console.log(`Blob name: ${blob.name}`);
             blobs.push(blob.name);
         }
 
