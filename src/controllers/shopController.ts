@@ -138,12 +138,10 @@ export const getShopWithUserId = async (req: Request, res: Response) => {
       where: { user: { idUsers: parseInt(user_id) } },
     });
     if (!shop) {
-      res
-        .status(404)
-        .json({
-          error: `User ID ${user_id} does not have a shop`,
-          hasShop: false,
-        });
+      res.status(404).json({
+        error: `User ID ${user_id} does not have a shop`,
+        hasShop: false,
+      });
       return;
     }
     res
@@ -320,7 +318,7 @@ export const getShopsWithCategory = async (req: Request, res: Response) => {
   try {
     // Retrieve array of shops fitting that category
     const shops = await Shops.find({
-      relations: ["categories"],
+      relations: ["categories", "user"],
       where: { categories: { categoryName } },
     });
 
