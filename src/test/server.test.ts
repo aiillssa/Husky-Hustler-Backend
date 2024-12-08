@@ -5,18 +5,19 @@ import { createUser, getAllUsers } from "../controllers/userController";
 import { AppDataSource } from "../config/data-source";
 import { createUserValidator } from "../middleware/validators/createUserValidator";
 import { before, after } from "mocha";
+import { createShopValidator } from "../middleware/validators/createShopValidator";
+import { deleteShop, getAllShops } from "../controllers/shopController";
 
 describe("user-routes", function () {
-
   before(async function () {
     // Initialize the connection before any tests
     this.timeout(5000); // Optional: Increase the timeout if connection takes time
     await AppDataSource.initialize()
       .then(() => {
-        console.log('DataSource has been initialized!');
+        console.log("DataSource has been initialized!");
       })
       .catch((error) => {
-        console.error('Error during DataSource initialization:', error);
+        console.error("Error during DataSource initialization:", error);
       });
   });
 
@@ -24,10 +25,10 @@ describe("user-routes", function () {
   after(async function () {
     await AppDataSource.destroy() // Ensure the connection is properly closed
       .then(() => {
-        console.log('DataSource connection closed!');
+        console.log("DataSource connection closed!");
       })
       .catch((error) => {
-        console.error('Error during DataSource destruction:', error);
+        console.error("Error during DataSource destruction:", error);
       });
   });
 
@@ -124,7 +125,6 @@ describe("user-routes", function () {
     createUserValidator(s, s2, () => createUser(s, s2));
     console.log(s2._getStatusCode());
     assert.deepStrictEqual(s2._getStatusCode(), 200);
-
   });
 
   it("get", async function () {
@@ -151,5 +151,52 @@ describe("user-routes", function () {
     getAllUsers(l, l2);
 
     assert.deepStrictEqual(l2._getStatusCode(), 200);
+  });
+
+  it("createShop", async function () {
+    // Test: Invalid Request Body - Missing fields
+    let req = httpMocks.createRequest({
+      method: "POST",
+      url: "/shops/",
+      body: {}, // Missing required fields
+    });
+    let res = httpMocks.createResponse();
+    let next = () => {};
+
+    createShopValidator(req, res, next);
+    assert.strictEqual(res.statusCode, 400);
+    assert(res._getJSONData().error.includes("At least one missing field"));
+  });
+
+  it("getAllShops", async function () {
+    let req = httpMocks.createRequest({
+      method: "GET",
+      url: "/shops/",
+      body: {},
+    });
+    let res = httpMocks.createResponse();
+    await getAllShops(req, res);
+    assert.deepStrictEqual(res._getStatusCode(), 200);
+  });
+
+  it("deleteShop", async function () {
+    let req = httpMocks.createRequest({
+      method: "DELETE",
+      url: "/shops/",
+      // params: new URLSearchParams({}),
+    });
+    let res = httpMocks.createResponse();
+
+    await deleteShop(req, res);
+    assert.deepStrictEqual(res._getStatusCode(), 400);
+
+    req = httpMocks.createRequest({
+      method: "DELETE",
+      url: "/shops/",
+      params: { id: "1" },
+    });
+    res = httpMocks.createResponse();
+    await deleteShop(req, res);
+    assert.deepStrictEqual(res._getStatusCode(), 204);
   });
 });
