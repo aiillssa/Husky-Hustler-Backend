@@ -137,11 +137,17 @@ export const uploadProductBlob = async (req: Request, res: Response) => {
     console.log(captions)
     console.log(prices)
 
-    //user id, products captions, products prices, also product indices
 
-    //[image1, image2, image3]
-    //[caption1, ]
-    //[price1, ]
+    //Frontend: 
+    //Add products to the upload images component as a prop -> pass back the captions and prices to parent component
+    //  -Will probably need to make a callback function ? 
+
+
+    //Backend:
+    //Make products controller? methods?
+    //  -Process array of products -> Product[]
+    //  -Add products to product table
+
 
 
     files.forEach(async (file, index) => {
@@ -151,19 +157,9 @@ export const uploadProductBlob = async (req: Request, res: Response) => {
             res.status(200).send("[blobController] - successfully uploaded blob")
         } catch (err) {
             console.log(err)
-            //res.status(500).send("An error occurred while uploading the image.");
         }
 
     });
-
-
-
-
-
-    // console.log("body", req.body);
-    // console.log("file received", file.originalname);
-
-
 
 }
 
