@@ -1,8 +1,5 @@
 import { Request, Response } from "express";
 import { Shops } from "../models/Shop";
-import { Users } from "../models/Users";
-import { Categories } from "../models/Categories";
-import { In } from "typeorm";
 
 /**
  * POST request for creating a new shop
@@ -19,51 +16,20 @@ export const createShop = async (req: Request, res: Response) => {
     shopDescription,
     ownerName,
     contactInformation,
-    userIdUsers, // Might want to pass this through params
-    categories,
+    validatedUser,
+    validatedCategories,
     necessaryDescription,
   } = req.body;
 
   try {
-    // Validate that user exists in the user table
-    const user = await Users.findOne({
-      relations: ["shop"],
-      where: { idUsers: parseInt(userIdUsers) },
-    });
-    if (!user) {
-      res.status(404).json({ error: "User not found" });
-      return;
-    }
-
-    // Validate that user does not already own a shop
-    if (user.shop) {
-      res.status(400).json({
-        error: `User already has a shop: ${user.shop}`,
-        shop: user.shop,
-      });
-      return;
-    }
-
-    // Validate categories[i] exists in categories table
-    const categoryEntities = await Categories.findBy({
-      categoryName: In(categories),
-    });
-
-    if (categoryEntities.length !== categories.length) {
-      res.status(400).json({
-        error: `At least one category passed in does not exist in the table`,
-      });
-      return;
-    }
-
     // Create shop
     const shop = Shops.create({
       shopName: shopName,
       shopDescription: shopDescription,
       ownerName: ownerName,
       contactInformation: contactInformation,
-      categories: categoryEntities,
-      user: user,
+      categories: validatedCategories,
+      user: validatedUser,
       necessaryDescription: necessaryDescription ?? null,
     });
 
@@ -187,11 +153,6 @@ export const getAllShops = async (req: Request, res: Response) => {
  * - 500 if server error
  */
 export const updateShops = async (req: Request, res: Response) => {
-  const shop_id = req.params.id;
-  if (!shop_id) {
-    res.status(400).json({ error: `Shop ID is required` });
-    return;
-  }
   const {
     shopName,
     shopDescription,
@@ -199,6 +160,7 @@ export const updateShops = async (req: Request, res: Response) => {
     contactInformation,
     categories,
     necessaryDescription,
+    validatedShop,
   } = req.body;
   const changes = new Map<string, any>();
   if (shopName) changes.set("shopName", shopName);
@@ -208,53 +170,19 @@ export const updateShops = async (req: Request, res: Response) => {
   if (categories) changes.set("categories", categories);
   if (necessaryDescription)
     changes.set("necessaryDescription", necessaryDescription);
+
   if (changes.size === 0) {
     res.sendStatus(204);
     console.log(`No changes made`);
     return;
   }
-
-  if (contactInformation && typeof contactInformation !== "object") {
-    res.status(400).json({
-      error: `contactInformation must be a json`,
-    });
-    return;
-  }
-
-  if (necessaryDescription && typeof necessaryDescription !== "object") {
-    res.status(400).json({
-      error: `necessaryDescription must be a json`,
-    });
-    return;
-  }
-
   try {
-    const shop = await Shops.findOne({
-      relations: ["categories"],
-      where: { idshops: parseInt(shop_id) },
-    });
-    if (!shop) {
-      res.status(404).json({ error: "Shop not found" });
-      return;
-    }
     changes.forEach((value, key) => {
-      (shop as any)[key] = value;
+      console.log(value);
+      (validatedShop as any)[key] = value;
     });
-    if (categories) {
-      const categoryEntities = await Categories.findBy({
-        categoryName: In(categories),
-      });
-      if (categoryEntities.length !== categories.length) {
-        res.status(400).json({
-          error: `At least one category passed in does not exist in the table`,
-        });
-        return;
-      }
-      shop.categories = categoryEntities;
-    }
-
-    await shop.save();
-    res.status(200).json({ shop: shop });
+    await validatedShop.save();
+    res.status(200).json({ shop: validatedShop });
     console.log(`[Controller - updateShops] Shop updated successfully`);
   } catch (err) {
     console.warn(
