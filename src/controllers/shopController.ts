@@ -19,6 +19,7 @@ export const createShop = async (req: Request, res: Response) => {
     validatedUser,
     validatedCategories,
     necessaryDescription,
+    validatedProducts,
   } = req.body;
 
   try {
@@ -31,6 +32,7 @@ export const createShop = async (req: Request, res: Response) => {
       categories: validatedCategories,
       user: validatedUser,
       necessaryDescription: necessaryDescription ?? null,
+      products: validatedProducts ?? null,
     });
 
     const savedShop = await shop.save();
@@ -161,7 +163,10 @@ export const updateShops = async (req: Request, res: Response) => {
     categories,
     necessaryDescription,
     validatedShop,
+    validatedProducts,
   } = req.body;
+
+  // Record which values are being changed
   const changes = new Map<string, any>();
   if (shopName) changes.set("shopName", shopName);
   if (shopDescription) changes.set("shopDescription", shopDescription);
@@ -170,12 +175,15 @@ export const updateShops = async (req: Request, res: Response) => {
   if (categories) changes.set("categories", categories);
   if (necessaryDescription)
     changes.set("necessaryDescription", necessaryDescription);
+  if (validatedProducts) changes.set("products", validatedProducts);
 
+  // If no changes, then return 204 No Content
   if (changes.size === 0) {
     res.sendStatus(204);
     console.log(`No changes made`);
     return;
   }
+
   try {
     changes.forEach((value, key) => {
       console.log(value);
