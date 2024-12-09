@@ -6,12 +6,6 @@ const routerBlobs = express.Router();
 
 const upload = multer();
 
-// const uploadFields = upload.fields([
-//     { name: 'files' },
-// ])
-
-
-//routerBlobs.get("/:id/:source", downloadBlob) //will b added in the future...
 routerBlobs.get("/", listBlobs);
 routerBlobs.get("/:id/:source", downloadBlob);
 routerBlobs.post("/", upload.single('file'), uploadBlob);
