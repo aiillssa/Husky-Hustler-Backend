@@ -163,4 +163,32 @@ export const uploadProductBlob = async (req: Request, res: Response) => {
 
 }
 
+export const deleteBlob = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    console.log("Initializing BlobServiceClient...");
+    const blobServiceClient = await loadServiceClient();
+    const containerClient = blobServiceClient.getContainerClient("images");
+
+    const blobs = [];
+    for await (const blob of containerClient.listBlobsFlat()) {
+        // console.log(`Blob name: ${blob.name}`);
+        blobs.push(blob.name);
+    }
+
+    try {
+        console.log("blobs", blobs);
+        for (const blob of blobs) {
+            // const stringBlob = String(blob)
+            if (blob.includes(id)) {
+                console.log("stringblob", blob)
+                await containerClient.deleteBlob(blob);
+                res.status(200).send("deleted")
+            }
+        }
+    } catch (err) {
+        res.status(400).send("cannot delete")
+    }
+
+}
+
 
