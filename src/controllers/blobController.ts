@@ -45,7 +45,7 @@ export const downloadBlob = async (req: Request, res: Response) => {
     const blockBlobClient = containerClient.getBlockBlobClient(userID + "-" + source);
     const downloadBlockBlobResponse = await blockBlobClient.download(0);
     try {
-        res.setHeader("Content-Type", downloadBlockBlobResponse.contentType || "image/jpeg");
+        //res.setHeader("Content-Type", downloadBlockBlobResponse.contentType || "image/jpeg");
         if (!downloadBlockBlobResponse.readableStreamBody) {
             throw new Error("[blobController] - The readableStreamBody is undefined. Ensure you're running in a Node.js environment.");
         }
@@ -90,17 +90,19 @@ export const uploadProductBlob = async (req: Request, res: Response) => {
     const id = req.body.id;
     const source = req.body.source;
 
-    files.forEach(async (file, index) => {
-        const blockBlobClient = containerClient.getBlockBlobClient(id + "-" + source + index)
-        try {
+    try {
+        files.forEach(async (file, index) => {
+            const blockBlobClient = containerClient.getBlockBlobClient(id + "-" + source + index)
             await blockBlobClient.uploadData(file.buffer);
-            res.send("[blobController, uploadProductBlob] - successfully uploaded blob")
-        } catch (err) {
-            console.log(err)
-            res.status(400).send("[blobController, uploadProductBlob] - failed uploading blob");
-        }
 
-    });
+
+        });
+        res.send("[blobController, uploadProductBlob] - successfully uploaded blob")
+
+    } catch (err) {
+        res.status(400).send("[blobController, uploadProductBlob] - failed uploading blob");
+    }
+
 
 }
 
