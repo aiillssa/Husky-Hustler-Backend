@@ -5,10 +5,7 @@ User manual, backend documentation , and frontend documentation can be found in 
 1. Download Node.js v20.18.0
 2. clone Husky-Hustler-Backend repo
 3. make sure to run `npm install` 
-4. 
-`npm install` (you might need to do `npm install -force` if it doesn't work)
-
-`npm install yarn` (you might need to do `npm install -g yarn` if it doesn't work)
+4. `npm install` (you might need to do `npm install -force` if it doesn't work)
 
 ** To run the backend server **
 1. `npm run dev`
