@@ -20,17 +20,6 @@ export const loadServiceClient = async () => {
         AZURE_STORAGE_CONNECTION_STRING
     );
 
-
-    // Create the BlobServiceClient object with connection string
-    // const blobServiceClient = BlobServiceClient.fromConnectionString(
-    //     AZURE_STORAGE_CONNECTION_STRING
-    // );
-    // console.log("Initializing BlobServiceClient...");
-    // const blobServiceClient = new BlobServiceClient(
-    //     `https://${accountName}.blob.core.windows.net`,
-    //     new DefaultAzureCredential() // Ensure credentials are correct)
-    // );
-
     return blobServiceClient
 }
 
@@ -46,7 +35,7 @@ export const listBlobs = async (req: Request, res: Response) => {
             blobs.push(blob.name);
         }
 
-        res.status(200).json({ message: "Success", blobs });
+        res.json({ message: "Success", blobs });
     } catch (error) {
         console.error("Failed to list blobs:", error);
         res.status(500).json({ error: error });
@@ -54,8 +43,7 @@ export const listBlobs = async (req: Request, res: Response) => {
 };
 
 
-//! Notes for future: make sure change route to have the id and source as well!
-//PASS IN THE USER ID IN THE URL
+
 export const downloadBlob = async (req: Request, res: Response) => {
     const userID = req.params.id
     const source = req.params.source
@@ -75,8 +63,9 @@ export const downloadBlob = async (req: Request, res: Response) => {
         if (!downloadBlockBlobResponse.readableStreamBody) {
             throw new Error("The readableStreamBody is undefined. Ensure you're running in a Node.js environment.");
         }
-        res.status(200)
+
         downloadBlockBlobResponse.readableStreamBody.pipe(res);
+        //res.send("downloaded blob")
 
 
     } catch (err) {
@@ -114,7 +103,7 @@ export const uploadBlob = async (req: Request, res: Response) => {
 
     try {
         await blockBlobClient.uploadData(file.buffer);
-        res.status(200).send("[blobController] - successfully uploaded blob")
+        res.send("[blobController] - successfully uploaded blob")
     } catch (err) {
         console.log(err)
         res.status(500).send("An error occurred while uploading the image.");
@@ -137,26 +126,14 @@ export const uploadProductBlob = async (req: Request, res: Response) => {
     console.log(captions)
     console.log(prices)
 
-
-    //Frontend: 
-    //Add products to the upload images component as a prop -> pass back the captions and prices to parent component
-    //  -Will probably need to make a callback function ? 
-
-
-    //Backend:
-    //Make products controller? methods?
-    //  -Process array of products -> Product[]
-    //  -Add products to product table
-
-
-
     files.forEach(async (file, index) => {
         const blockBlobClient = containerClient.getBlockBlobClient(id + "-" + source + index)
         try {
             await blockBlobClient.uploadData(file.buffer);
-            res.status(200).send("[blobController] - successfully uploaded blob")
+            res.send("[blobController] - successfully uploaded blob")
         } catch (err) {
             console.log(err)
+            res.status(400).send("[blobController] - failed uploading blob");
         }
 
     });
@@ -171,7 +148,6 @@ export const deleteBlob = async (req: Request, res: Response) => {
 
     const blobs = [];
     for await (const blob of containerClient.listBlobsFlat()) {
-        // console.log(`Blob name: ${blob.name}`);
         blobs.push(blob.name);
     }
 
@@ -182,9 +158,9 @@ export const deleteBlob = async (req: Request, res: Response) => {
             if (blob.includes(id)) {
                 console.log("stringblob", blob)
                 await containerClient.deleteBlob(blob);
-                res.status(200).send("deleted")
             }
         }
+        res.send("deleted")
     } catch (err) {
         res.status(400).send("cannot delete")
     }
