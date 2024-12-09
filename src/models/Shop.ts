@@ -19,7 +19,7 @@ export class Shops extends BaseEntity {
   @Column()
   shopName!: string;
 
-  @Column()
+  @Column("text", { default: "" })
   shopDescription!: string;
 
   @Column("simple-json", { nullable: true })
