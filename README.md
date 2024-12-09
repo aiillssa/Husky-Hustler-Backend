@@ -1,7 +1,8 @@
 # Husky-Hustlers-Backend
 
-User manual, backend documentation , and frontend documentation can be found in the "Wiki" tab.
+User manual, backend documentation, and frontend documentation can be found in the "Wiki" tab.
 
+** Set up **
 1. Download Node.js v20.18.0
 2. clone Husky-Hustler-Backend repo
 3. make sure to run `npm install` 
