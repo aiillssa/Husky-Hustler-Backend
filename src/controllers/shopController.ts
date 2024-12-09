@@ -65,7 +65,7 @@ export const getShop = async (req: Request, res: Response) => {
   try {
     // Get shop
     const shop = await Shops.findOne({
-      relations: ["categories"],
+      relations: ["categories", "products"],
       where: { idshops: parseInt(shop_id) },
     });
 
