@@ -25,6 +25,7 @@ export const updateShopValidator = async (
   next: NextFunction
 ) => {
   const shop_id = req.params.id;
+  // Check that shop id is passed in
   if (!shop_id) {
     console.warn(`[Validator - updateShopValidator] no shop id was provided`);
     res.status(400).json({ error: `Shop ID is required` });
@@ -33,6 +34,7 @@ export const updateShopValidator = async (
   const { shopName, contactInformation, necessaryDescription, categories } =
     req.body;
 
+  // Check that if shopName is being updated, it is a nonempty string
   if (shopName && (typeof shopName !== "string" || shopName === "")) {
     console.warn(
       `[Validator - updateShopValidator] shopName is either not a string or is an empty string`
@@ -43,6 +45,7 @@ export const updateShopValidator = async (
     return;
   }
 
+  // Check that if contactInformation is being updated, it is a json
   if (contactInformation && typeof contactInformation !== "object") {
     console.warn(
       `[Validator - updateShopValidator] contactInformation is not a json`
@@ -53,6 +56,7 @@ export const updateShopValidator = async (
     return;
   }
 
+  // Check that if necessaryDescription is being updated, it is a json
   if (necessaryDescription && typeof necessaryDescription !== "object") {
     console.warn(
       `[Validator - updateShopValidator] necessaryDescription is not a json`
@@ -67,6 +71,8 @@ export const updateShopValidator = async (
       relations: ["categories"],
       where: { idshops: parseInt(shop_id) },
     });
+
+    // Check that shop exists
     if (!shop) {
       console.warn(`[Validator - updateShopValidator] the shop does not exist`);
       res.status(404).json({ error: "Shop not found" });
@@ -76,6 +82,7 @@ export const updateShopValidator = async (
       const categoryEntities = await Categories.findBy({
         categoryName: In(categories),
       });
+      // Check that categories exist in the table
       if (categoryEntities.length !== categories.length) {
         console.warn(
           `[Validator - updateShopValidator] at least one category passed in does not exist in the table`
@@ -87,6 +94,8 @@ export const updateShopValidator = async (
       }
       shop.categories = categoryEntities;
     }
+
+    // Prepare for the next middleware
     req.body.validatedShop = shop;
   } catch (err) {
     console.warn(
@@ -95,5 +104,7 @@ export const updateShopValidator = async (
     res.status(500).json({ err: String(err) });
     return;
   }
+
+  // Proceed to the next middleware
   next();
 };

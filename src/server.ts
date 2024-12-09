@@ -44,6 +44,8 @@ app.use("/shops", routerShops);
 // Category route
 app.use("/categories", routerCategories);
 
+// Sign Up / Sign In route
 app.use("/google", routerGoogle);
 
+// Blob storage
 app.use("/blob", routerBlobs);

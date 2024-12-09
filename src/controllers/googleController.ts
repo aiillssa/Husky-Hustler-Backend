@@ -1,4 +1,3 @@
-// controllers/googleController.ts
 import { OAuth2Client } from "google-auth-library";
 import { Request, Response } from "express";
 import axios from "axios";
@@ -14,14 +13,14 @@ const oAuth2Client = new OAuth2Client(
 
 /**
  * - Exchanges the authorization code from the front end with Google's OAuth Server to access user info
- * @param code 
+ * @param code
  * - Contains the code to exchange for user info with Google OAuth server
- * @returns 
+ * @returns
  * - The email and name of the user associated with the UW Google account
  */
 export const getGoogleUserInfo = async (
   code: string
-): Promise<{email: string; name: string, picture: string} | null> => {
+): Promise<{ email: string; name: string; picture: string } | null> => {
   try {
     // Exchange authorization code for token
     const { tokens } = await oAuth2Client.getToken(code);
@@ -46,24 +45,29 @@ export const getGoogleUserInfo = async (
     const { email, name, picture } = payload;
 
     if (!email || !name || !picture) {
-      throw new Error("Missing email, name, or picture in Google token payload");
+      throw new Error(
+        "Missing email, name, or picture in Google token payload"
+      );
     }
 
-    return {email, name, picture};
+    return { email, name, picture };
   } catch (error) {
-    console.error("[Utility - getGoogleUserInfo] Error getting user info:", error);
+    console.error(
+      "[Utility - getGoogleUserInfo] Error getting user info:",
+      error
+    );
     return null;
   }
 };
 
 /**
  * Handles signing users up using their UW Google account
- * @param req 
+ * @param req
  * - contains the code to exchange for user info with Google OAuth server
- * @param res 
- * - The status code as well as usserId of created user on success and 
+ * @param res
+ * - The status code as well as usserId of created user on success and
  *   error message on failture
- * @returns 
+ * @returns
  * - 201 if user is added successfully to the database
  * - 400 if adding the user to the database returns an unexpected error
  * - 401 if getGoogleUserInfo fails to retreive the info of the Goolge user
@@ -74,7 +78,7 @@ export const handleGoogleSignUp = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  try{
+  try {
     const { code } = req.body;
     // Attempts to get user info from Google OAuth server
     const userInfo = await getGoogleUserInfo(code);
@@ -87,10 +91,13 @@ export const handleGoogleSignUp = async (
     const { email, name } = userInfo;
     // Tries adding the user to the database
     try {
-      const createUserResponse = await axios.post("http://localhost:8088/users", {
-        name,
-        email,
-      });
+      const createUserResponse = await axios.post(
+        "http://localhost:8088/users",
+        {
+          name,
+          email,
+        }
+      );
 
       if (createUserResponse.status === 201) {
         res.status(201).json({
@@ -107,7 +114,7 @@ export const handleGoogleSignUp = async (
         res.status(400).json({ error: error.response?.data?.error });
         return;
       }
-      throw error; 
+      throw error;
     }
   } catch (error) {
     console.error("Error during Google sign-up:", error);
@@ -117,12 +124,12 @@ export const handleGoogleSignUp = async (
 
 /**
  * Handles logging users in using their UW Google account
- * @param req 
+ * @param req
  * - contains the code to exchange for user info with Google OAuth server
- * @param res 
- * - The status code as well as auth, JWT, userId, email, and name of logged in user on success and 
+ * @param res
+ * - The status code as well as auth, JWT, userId, email, and name of logged in user on success and
  *   error message on failture
- * @returns 
+ * @returns
  * - 200 if user is successfully retreived from the database
  * - 400 if user did not exist in the database
  * - 401 if getGoogleUserInfo fails to retreive the info of the Goolge user
@@ -132,7 +139,7 @@ export const handleGoogleLogIn = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  try{
+  try {
     const { code } = req.body;
     // Attempts to get user info from Google OAuth server
     const userInfo = await getGoogleUserInfo(code);
@@ -146,67 +153,61 @@ export const handleGoogleLogIn = async (
     // Tries to find the user in the database using email
     const existingUser = await Users.findOne({ where: { email: email } });
     if (existingUser) {
+      // If the user exists, get their userID for the front end
+      const user_id = existingUser.idUsers;
 
-    // If the user exists, get their userID for the front end
-    const user_id = existingUser.idUsers;
+      // Create the auth JWT
+      const token = jwt.sign({ id: user_id }, process.env.APP_SECRET!, {
+        expiresIn: "5m",
+      });
 
-    // Create the auth JWT
-    const token = jwt.sign(
-      { id: user_id },
-      process.env.APP_SECRET!,
-      { expiresIn: "5m" }
-    );
+      const refreshToken = jwt.sign({ id: user_id }, process.env.APP_SECRET!, {
+        expiresIn: "1d",
+      });
+      const refreshToken2 = "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15";
 
-    const refreshToken = jwt.sign(
-      { id: user_id },
-      process.env.APP_SECRET!,
-      { expiresIn: "1d" }
-    );
-    const refreshToken2 = "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15"
+      // Set refresh token as an HttpOnly cookie
+      res.cookie("refreshToken", refreshToken, {
+        maxAge: 1000 * 60 * 60 * 24, // expire after 1 day
+        httpOnly: true, // Cookie will not be exposed to client side code
+        sameSite: "none", // If client and server origins are different
+        secure: true, // use with HTTPS only
+        domain: "localhost",
+      });
 
-    // Set refresh token as an HttpOnly cookie
-    res.cookie( "refreshToken", refreshToken, {
-      maxAge: 1000 * 60 * 60 * 24, // expire after 1 day
-      httpOnly: true, // Cookie will not be exposed to client side code
-      sameSite: 'none', // If client and server origins are different
-      secure: true, // use with HTTPS only
-      domain: 'localhost',
-    });
-    
-    res.status(200).json({
-      auth: true, 
-      token: token,
-      id: user_id,
-      email: userInfo.email,
-      name: userInfo.name,
-      picture: userInfo.picture,
-    });
-    return;
+      res.status(200).json({
+        auth: true,
+        token: token,
+        id: user_id,
+        email: userInfo.email,
+        name: userInfo.name,
+        picture: userInfo.picture,
+      });
+      return;
     }
-    res.status(400).json({error: "User did not exist in the table"});
+    res.status(400).json({ error: "User did not exist in the table" });
     return;
   } catch (error) {
     console.error("Error during Google login:", error);
     res.status(500).json({ error: "Failed to log in with Google" });
   }
-}
+};
 
 export const handleLogOut = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  try{
-    res.clearCookie('refreshToken', {
-      httpOnly: true, 
-      sameSite: 'none', 
-      secure: true, 
-      domain: 'localhost',
+  try {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+      domain: "localhost",
     });
     console.log("Cleared cookies");
-    res.status(200).json({ message: 'User logged out successfully' });
+    res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
-    console.error('Error during logout:', error);
-    res.status(500).json({ message: 'Failed to log out. Please try again.' });
-  } 
-}
-
+    console.error("Error during logout:", error);
+    res.status(500).json({ message: "Failed to log out. Please try again." });
+  }
+};

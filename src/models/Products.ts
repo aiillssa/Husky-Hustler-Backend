@@ -14,9 +14,12 @@ export class Products extends BaseEntity {
   idProducts!: number;
 
   @Column()
-  productName!: string;
+  caption!: string;
 
-  @ManyToOne(() => Shops, (shop) => shop.products)
+  @Column()
+  price!: string;
+
+  @ManyToOne(() => Shops, (shop) => shop.products, { onDelete: "CASCADE" })
   @JoinColumn({ name: "idshops" })
   shop!: Shops;
 }

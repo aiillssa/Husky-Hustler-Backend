@@ -6,7 +6,7 @@ import { In } from "typeorm";
 /**
  * Middleware which validates requests for the createShop endpoint
  * If any validation check fails, it returns a 400 Bad Request
- * Expected fields for the request body (all required except necessaryDescription):
+ * Expected fields for the request body (all required except necessaryDescription and products):
  * - shopName (string): nonempty
  * - shopDescription (string)
  * - ownerName (string)
@@ -17,6 +17,7 @@ import { In } from "typeorm";
  * - categories (array): 0 < len(categories) <= 3, categories[i] must be in categories table
  * - contactInformation (json)
  * - necessaryDescription (json)
+ * - products (array of json)
  * @returns
  * - 400 error if validation fails
  * - 404 if user for whom shop is being created does not exist
@@ -39,6 +40,7 @@ export const createShopValidator = async (
     contactInformation,
     userIdUsers,
     categories,
+    necessaryDescription,
   } = req.body;
 
   // Check for missing fields
@@ -85,12 +87,29 @@ export const createShopValidator = async (
       .json({ error: `Cannot have more than 3 categories. Please try again` });
     return;
   }
+
+  // Check if contactInformation is a json
   if (typeof contactInformation !== "object" || contactInformation === null) {
+    console.warn(
+      `[Validator - createShopValidator] contactInformation is not a json`
+    );
     res.status(400).json({
       error: `contactInformation must be a json type. Please try again`,
     });
     return;
   }
+
+  // Check that if necessaryDescription exists, it is a json
+  if (necessaryDescription && typeof necessaryDescription !== "object") {
+    console.warn(
+      `[Validator - createShopValidator] necessaryDescription is not a json`
+    );
+    res.status(400).json({
+      error: `necessaryDescription must be a json`,
+    });
+    return;
+  }
+
   try {
     const user = await Users.findOne({
       relations: ["shop"],
@@ -122,6 +141,8 @@ export const createShopValidator = async (
       });
       return;
     }
+
+    // Prepare to pass onto the next function
     req.body.validatedUser = user;
     req.body.validatedCategories = categoryEntities;
   } catch (err) {

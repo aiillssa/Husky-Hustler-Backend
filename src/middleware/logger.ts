@@ -1,6 +1,3 @@
-// Example: Middleware to keep a personal log of users logging into
-// website (for evil reasons of course muahahahahaha)
-
 import { NextFunction, Request, Response } from "express";
 import { PathLike, existsSync } from "fs";
 import { appendFile, mkdir } from "fs/promises";

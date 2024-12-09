@@ -14,8 +14,6 @@ import { Products } from "./Products";
 @Entity()
 export class Shops extends BaseEntity {
   @PrimaryGeneratedColumn()
-  //note this is a non-null assertion that tells ts we will assign these values at runtime
-  //Side note, if we don't want this, we can set "strict" = false in tsconfig.json but its BAD!!!
   idshops!: number;
 
   @Column()
@@ -33,9 +31,8 @@ export class Shops extends BaseEntity {
   @Column("simple-json")
   contactInformation!: Record<string, any>;
 
-  //returning the idUsers field
   @OneToOne(() => Users, (users) => users.shop, { onDelete: "CASCADE" })
-  @JoinColumn() // This will make shop the owning side of this one-to-one relation thing
+  @JoinColumn()
   user!: Users;
 
   @ManyToMany(() => Categories)
@@ -48,6 +45,10 @@ export class Shops extends BaseEntity {
   })
   categories!: Categories[];
 
-  @OneToMany(() => Products, (product) => product.shop)
+  @OneToMany(() => Products, (product) => product.shop, {
+    onDelete: "CASCADE",
+    cascade: ["insert", "update", "remove"],
+    nullable: true,
+  })
   products!: Products[];
 }
