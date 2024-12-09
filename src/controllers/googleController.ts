@@ -61,7 +61,7 @@ export const getGoogleUserInfo = async (
 };
 
 /**
- * Handles signing users up using their UW Google account
+ * - Handles signing users up using their UW Google account
  * @param req
  * - contains the code to exchange for user info with Google OAuth server
  * @param res
