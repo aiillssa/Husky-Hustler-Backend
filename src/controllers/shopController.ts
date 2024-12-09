@@ -103,6 +103,7 @@ export const getShopWithUserId = async (req: Request, res: Response) => {
   }
   try {
     const shop = await Shops.findOne({
+      relations: ["products"],
       where: { user: { idUsers: parseInt(user_id) } },
     });
     if (!shop) {
