@@ -14,7 +14,6 @@ export const createUser = async (req: Request, res: Response) => {
     // Create user
     const user = Users.create({ name, email });
     await user.save();
-    console.log(user);
     res.status(201).json({ msg: "Success", user_id: user.idUsers });
   } catch (err) {
     console.warn(
@@ -28,7 +27,6 @@ export const createUser = async (req: Request, res: Response) => {
 export const getAllUsers = async (_req: Request, res: Response) => {
   try {
     const allUsers = await Users.find();
-    console.log(allUsers);
     res.status(200).json({ users: allUsers });
   } catch (err) {
     console.warn(

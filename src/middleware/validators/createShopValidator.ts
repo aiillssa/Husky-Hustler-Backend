@@ -30,8 +30,6 @@ export const createShopValidator = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(req.body);
-
   // Extract fields from request body
   const {
     shopName,

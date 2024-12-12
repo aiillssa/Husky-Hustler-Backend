@@ -82,7 +82,6 @@ export const handleGoogleSignUp = async (
     const { code } = req.body;
     // Attempts to get user info from Google OAuth server
     const userInfo = await getGoogleUserInfo(code);
-    console.log(userInfo);
     if (!userInfo) {
       res.status(401).json({ error: "Failed to retrieve Google user info" });
       return;

@@ -17,7 +17,6 @@ export const logger = async (
   const logPath: PathLike = path.join(__dirname, "..", "logs");
   const filePath: PathLike = path.join(logPath, "log-data.csv");
   try {
-    console.log(req);
     if (!existsSync(logPath)) {
       await mkdir(logPath);
       await appendFile(filePath, "Date, Time, Category\n");

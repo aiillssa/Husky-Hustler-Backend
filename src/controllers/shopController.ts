@@ -134,7 +134,6 @@ export const getAllShops = async (req: Request, res: Response) => {
   try {
     // Get all shops
     const shops = await Shops.find({ relations: ["categories", "user"] });
-    //console.log(shops);
     console.log("Accessed all shops successfully");
     res.status(200).json({ shops });
   } catch (err) {
@@ -187,7 +186,6 @@ export const updateShops = async (req: Request, res: Response) => {
 
   try {
     changes.forEach((value, key) => {
-      console.log(value);
       (validatedShop as any)[key] = value;
     });
     await validatedShop.save();
@@ -251,7 +249,6 @@ export const getShopsWithCategory = async (req: Request, res: Response) => {
     res.status(400).json({ error: `Category Name is required` });
     return;
   }
-  console.log(categoryName);
   try {
     // Retrieve array of shops fitting that category
     const shops = await Shops.find({

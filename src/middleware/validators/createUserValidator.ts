@@ -17,7 +17,6 @@ export const createUserValidator = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(req.body);
   // Extract fields from body
   const { name, email } = req.body;
 
